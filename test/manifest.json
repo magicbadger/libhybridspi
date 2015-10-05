@@ -1,0 +1,15 @@
+{
+    "entries": [
+        {
+            "contentname" : "SI.xml",
+            "path" : "data/SI.xml",
+            "scopeid" : "e1.c479"
+        },
+        {
+            "contentname" : "PI.xml",
+            "path" : "data/PI.xml",
+            "scopestart" : "2015-09-21T00:00:00Z",
+            "scopeend" : "2015-09-22T00:00:00Z"
+        }
+    ]
+}
