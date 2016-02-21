@@ -1,9 +1,11 @@
-#include "hybridspi_mot.h"
-#include "mot.h"
+#include <hybridspi/mot.h>
+#include <hybridspi/util.h>
+#include <hybridspi/binary.h>
+#include <bitset>
 
 using namespace spi;
 
-ScopeStart::ScopeStart(int timepoint)
+ScopeStart::ScopeStart(DateTime timepoint)
     : HeaderParameter(0x25), timepoint(timepoint)
 { }
 
@@ -15,10 +17,10 @@ bool ScopeStart::equals(const HeaderParameter& other) const
 
 vector<unsigned char> ScopeStart::encodeData() const
 {
-    return mot::timepoint_to_encoded_utc(timepoint);
+    return hybridspi::binary::encode_timepoint(timepoint);
 }
 
-ScopeEnd::ScopeEnd(int timepoint)
+ScopeEnd::ScopeEnd(DateTime timepoint)
     : HeaderParameter(0x26), timepoint(timepoint)
 { }
 
@@ -30,25 +32,22 @@ bool ScopeEnd::equals(const HeaderParameter& other) const
 
 vector<unsigned char> ScopeEnd::encodeData() const
 {
-    return mot::timepoint_to_encoded_utc(timepoint);
+    return hybridspi::binary::encode_timepoint(timepoint);
 }
 
-ScopeId::ScopeId(int ecc, int eid)
-    : HeaderParameter(0x27), ecc(ecc), eid(eid)
+ScopeId::ScopeId(content_id scope)
+    : HeaderParameter(0x27), scope(scope)
 { }
 
 bool ScopeId::equals(const HeaderParameter& other) const
 {
     const ScopeId* that = dynamic_cast<const ScopeId*>(&other);
-    return that != nullptr && (this->ecc == that->ecc) && (this->eid == that->ecc);
+    return that != nullptr && this->scope == that->scope;
 }
 
 vector<unsigned char> ScopeId::encodeData() const
 {
-    bitset<24> bits(eid + // EId (16)
-                   (ecc << 16)); // ECC(8)
-
-    vector<unsigned char> bytes = bits_to_bytes(bits);
-
-    return bytes;
+    bitset<24> bits(scope.eid + // EId (16)
+                    ((scope.ecc) << 16)); // ECC (8)
+    return bits_to_bytes(bits);
 }
