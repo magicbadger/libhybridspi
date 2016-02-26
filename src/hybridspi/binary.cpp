@@ -27,7 +27,7 @@ namespace hybridspi
         }
         
         Ensemble::Ensemble(int ecc, int eid)
-            : ecc(ecc), eid(eid), Named(), Described(), MultimediaEnabled()
+            : ecc(ecc), eid(eid), Named(), Described(), MediaEnabled()
         { }
         
         BinaryMarshaller::BinaryMarshaller(Ensemble ensemble)
@@ -38,19 +38,19 @@ namespace hybridspi
         {
             // serviceInformation
             Element serviceInformationElement(0x03);
-            serviceInformationElement.AddAttribute(Attribute(0x81, encode_timepoint(info.GetCreated())));
+            serviceInformationElement.AddAttribute(Attribute(0x81, encode_timepoint(info.Created())));
             
             vector<unsigned char> t = encode_number<16>(8);
             
-            if(info.GetVersion() > 0)
+            if(info.Version() > 0)
             {
-                Attribute versionAttribute(0x80, encode_number<16>(info.GetVersion()));
+                Attribute versionAttribute(0x80, encode_number<16>(info.Version()));
                 serviceInformationElement.AddAttribute(versionAttribute);
             }
-            if(!info.GetOriginator().empty())
+            if(!info.Originator().empty())
             {
-                Attribute originatorAttribute(0x80, encode_number<16>(info.GetVersion()));
-                serviceInformationElement.AddAttribute(Attribute(0x82, info.GetOriginator()));
+                Attribute originatorAttribute(0x80, encode_number<16>(info.Version()));
+                serviceInformationElement.AddAttribute(Attribute(0x82, info.Originator()));
             }
             
             // ensemble
@@ -272,21 +272,21 @@ namespace hybridspi
             ensembleElement.AddAttribute(ensembleIdAttribute);
             
             // names           
-            for(auto &name : ensemble.GetNames())
+            for(auto &name : ensemble.Names())
             {
                 Element nameElement = build_name(name);
                 ensembleElement.AddElement(nameElement);
             }
             
             // descriptions
-            for(auto &description : ensemble.GetDescriptions())
+            for(auto &description : ensemble.Descriptions())
             {
                 Element descriptionElement = build_description(description);
                 ensembleElement.AddElement(descriptionElement);
             }
            
             // media
-            for(auto &media : ensemble.GetMultimedia())
+            for(auto &media : ensemble.Media())
             {
                 Element mediaElement = build_media(media);
                 ensembleElement.AddElement(mediaElement);
@@ -305,7 +305,7 @@ namespace hybridspi
         Element build_description(Description description)
         {
             int tag;
-            if(name.MaxLength() <= 128) { tag = 0x1a; }
+            if(description.MaxLength() <= 128) { tag = 0x1a; }
             else { tag = 0x1b; }
             
             Element mediagroupElement(0x13);
@@ -357,52 +357,103 @@ namespace hybridspi
             return mediagroupElement;        
         }
         
+        Element build_genre(Genre genre)
+        {
+            Element genreElement(0x14);
+            Attribute hrefAttribute(0x80, encode_string(genre.Href()));
+            genreElement.AddAttribute(hrefAttribute);
+            return genreElement;
+        }
+        
         Element build_service(Service service)
         {
             Element serviceElement(0x28);
             
-            // service ID
-            for(auto &bearer : service.Bearers())
+            // bearers
+            for(auto *bearer : service.Bearers())
             {
+                Element bearerElement(0x29);
+
+                if(dynamic_cast<DabBearer*>(bearer)) 
+                {
+                    DabBearer *dabBearer = dynamic_cast<DabBearer*>(bearer);
+                    
+                    int sid = dabBearer->SId();
+                    bool audio = true;
+                    if(sid > (1<<16)) audio = false;
+                    
+                    vector<unsigned char> bytes;
+                    if(audio)
+                    {
+                        bitset<48> bits = (dabBearer->SId() + // SId (16)
+                                           (dabBearer->EId() << 16) + // EId (16)
+                                           (dabBearer->ECC() << 32) + // ECC (8)
+                                           (dabBearer->SCIdS() << 40) + // SCIdS (4)
+                                           (0 << 44) + // SId flag
+                                           (0 << 45) + // XPAD flag
+                                           (1 << 46)); // Ensemble flag 
+                        bytes = bits_to_bytes(bits);
+                    }
+                    else
+                    {
+                        bitset<64> bits = (dabBearer->SId() + // SId (32)
+                                           (dabBearer->EId() << 32) + // EId (16)
+                                           (dabBearer->ECC() << 48) + // ECC (8)
+                                           (dabBearer->SCIdS() << 56) + // SCIdS (4)
+                                           (0 << 60) + // SId flag
+                                           (0 << 61) + // XPAD flag
+                                           (1 << 62)); // Ensemble flag   
+                        bytes = bits_to_bytes(bits);
+                    }
+                     
+                    Attribute idAttribute(0x80, bytes);   
+                    bearerElement.AddAttribute(idAttribute);              
+                }
+                else if(dynamic_cast<IpBearer*>(bearer))
+                {
+                    IpBearer *ipBearer = dynamic_cast<IpBearer*>(bearer);
+                    Attribute urlAttribute(0x82, encode_string(ipBearer->URI()));
+                    bearerElement.AddAttribute(urlAttribute);              
+                }
+                else
+                {
+                    continue;
+                }
                 
+                serviceElement.AddElement(bearerElement);
             }
             
+            // names
+            for(auto &name : service.Names())
+            {
+                Element nameElement = build_name(name);
+                serviceElement.AddElement(nameElement);
+            }
             
+            // descriptions
+            for(auto &description : service.Descriptions())
+            {
+                Element descriptionElement = build_description(description);
+                serviceElement.AddElement(descriptionElement);
+            }
             
-    service_element = Element(0x28)
+            // media
+            for(auto &media : service.Media())
+            {
+                Element multimediaElement = build_media(media);
+                serviceElement.AddElement(multimediaElement);
+            }
+            
+            // genre
+            for(auto &genre : service.Genres())
+            {
+                Element genreElement = build_genre(genre);
+                serviceElement.AddElement(genreElement);
+            }
 
-    # version
-    if service.version > 1: service_element.attributes.append(Attribute(0x80, service.version, encode_number, 16))
+            // TODO keywords
 
-    # service IDs - the first in the list is primary, all others secondary
-    for bearer in service.bearers:
-        serviceid_element = Element(0x29)
-        serviceid_element.attributes.append(Attribute(0x80, bearer, encode_bearer))
-        service_element.children.append(serviceid_element)
-
-    # names
-    for name in service.names:
-        service_element.children.append(build_name(name))
-
-    # descriptions
-    for description in service.descriptions:
-        service_element.children.append(build_description(description))
-
-    # media
-    for media in service.media:
-        service_element.children.append(build_mediagroup(media))
-
-    # genre
-    for genre in service.genres:
-        service_element.children.append(build_genre(genre))
-
-    # language TODO
-
-    # keywords
-    if len(service.keywords):
-        service_element.children.append(build_keywords(service.keywords))
-
-
+            return serviceElement;
         }        
                 
 

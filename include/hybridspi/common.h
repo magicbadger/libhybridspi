@@ -73,9 +73,9 @@ namespace hybridspi
         
             Named();
             
-            vector<Name> GetNames() const;
+            vector<Name> Names() const { return names; };
             
-            vector<Name> GetNames(int maxlength) const;
+            vector<Name> Names(int maxlength) const;
             
             void AddName(Name name);
             
@@ -91,6 +91,10 @@ namespace hybridspi
         public:
         
             Description(string text, int max_length);
+            
+            // conversion constructor will return the most appropriate subtype
+            //Description(const char *x);
+
         
     };
     
@@ -129,9 +133,9 @@ namespace hybridspi
         
             Point(double latitude, double longitude);
             
-            double GetLatitude() { return latitude; }
+            double Latitude() { return latitude; }
             
-            double GetLongitude() { return longitude; }
+            double Longitude() { return longitude; }
             
         protected:
         
@@ -150,7 +154,7 @@ namespace hybridspi
         
             CountryCode(string code);
             
-            string GetCode() { return code; };
+            string Code() { return code; };
         
         protected:
         
@@ -169,7 +173,7 @@ namespace hybridspi
         
             Polygon(vector<Point> points);
             
-            vector<Point>::iterator GetPoints() { return points.begin(); };
+            vector<Point>::iterator Points() { return points.begin(); };
         
         protected:
         
@@ -185,7 +189,7 @@ namespace hybridspi
     {
         public:
             
-            vector<GeoLocation*>::iterator GetLocations() { return geolocations.begin(); };
+            vector<GeoLocation*>::iterator Locations() { return geolocations.begin(); };
             
             void AddLocation(GeoLocation* geolocation);
             
@@ -203,9 +207,9 @@ namespace hybridspi
         
             Bearer(int cost, int offset);
             
-            int GetCost() { return cost; }
+            int Cost() { return cost; }
             
-            int GetOffset() { return offset; }
+            int Offset() { return offset; }
             
             bool operator== (const Bearer &that) const;
             
@@ -232,6 +236,10 @@ namespace hybridspi
             
             virtual string URI() const = 0;  
             
+        protected:
+        
+            virtual bool equals(const Bearer& a) const = 0;                              
+            
         private:
             
             int bitrate;
@@ -245,13 +253,13 @@ namespace hybridspi
         
             DabBearer(int ecc, int eid, int sid, int scids, int bitrate, string content, int cost, int offset);
             
-            int GetECC() { return ecc; };
+            int ECC() { return ecc; };
             
-            int GetEId() { return eid; };
+            int EId() { return eid; };
             
-            int GetSId() { return sid; };
+            int SId() { return sid; };
             
-            int GetSCIdS() { return scids; };
+            int SCIdS() { return scids; };
             
             string URI() const; 
             
@@ -274,11 +282,11 @@ namespace hybridspi
         
             FmBearer(int ecc, int pi, int frequency, int cost, int offset);
             
-            int GetECC() { return ecc; };
+            int ECC() { return ecc; };
             
-            int GetPI() { return pi; };
+            int PI() { return pi; };
             
-            int GetFrequency() { return frequency; };
+            int Frequency() { return frequency; };
             
             string URI() const;             
             
@@ -315,11 +323,11 @@ namespace hybridspi
         
             Link(string url, string content, string description);
             
-            string GetUrl() { return url; };
+            string Url() { return url; };
             
-            string GetContent() { return content; };
+            string Content() { return content; };
             
-            string GetDescription() { return description; };
+            string Description() { return description; };
             
             bool operator== (const Link &that) const;
             
@@ -340,13 +348,13 @@ namespace hybridspi
         
             AbsoluteTime(DateTime billedTime, Duration billedDuration, DateTime actualTime, Duration actualDuration);
             
-            DateTime GetBilledTime() { return billedTime; };
+            DateTime BilledTime() { return billedTime; };
             
-            DateTime GetActualTime() { return actualTime; };
+            DateTime ActualTime() { return actualTime; };
             
-            Duration GetBilledDuration() { return billedDuration; };
+            Duration BilledDuration() { return billedDuration; };
             
-            Duration GetActualDuration() { return actualDuration; };
+            Duration ActualDuration() { return actualDuration; };
             
         private:
         
@@ -362,11 +370,11 @@ namespace hybridspi
         
             Membership(short shortcrid, string crid, short index);
             
-            short GetShortCrid() { return shortcrid; };
+            short ShortCrid() { return shortcrid; };
             
-            string GetCrid() { return crid; };
+            string Crid() { return crid; };
             
-            short GetIndex() { return index; };
+            short Index() { return index; };
         
         private:
         
@@ -418,9 +426,9 @@ namespace hybridspi
             
             Genre(string href, string name);
             
-            string GetHref() { return href; };
+            string Href() { return href; };
             
-            string GetName() { return name; };
+            string Name() { return name; };
             
             bool operator== (const Genre &that) const;
             
@@ -439,9 +447,9 @@ namespace hybridspi
         
             Described();
             
-            vector<Description> GetDescriptions() const;
+            vector<Description> Descriptions() const { return descriptions; };
             
-            vector<Description> GetDescriptions(int max_length) const;
+            vector<Description> Descriptions(int max_length) const;
             
             void AddDescription(Description description);
             
@@ -458,7 +466,7 @@ namespace hybridspi
         
             Linked();
             
-            vector<Link> GetLinks() const;
+            vector<Link> Links() const { return links; };
             
             void AddLink(Link link);
             
@@ -484,21 +492,21 @@ namespace hybridspi
             vector<string> keywords;
     };
     
-    class MultimediaEnabled
+    class MediaEnabled
     {
         public:
         
-            MultimediaEnabled();
+            MediaEnabled();
             
-            vector<Multimedia> GetMultimedia() const;
+            vector<Multimedia> Media() const { return media; };
             
-            void AddMultimedia(Multimedia multimedia);
+            void AddMedia(Multimedia multimedia);
             
-            void RemoveMultimedia(const Multimedia &multimedia);
+            void RemoveMedia(const Multimedia &multimedia);
             
         private:
         
-            vector<Multimedia> multimedias;
+            vector<Multimedia> media;
     };
     
     class Genred
@@ -507,7 +515,7 @@ namespace hybridspi
         
             Genred();
             
-            vector<Genre> GetGenres() const;
+            vector<Genre> Genres() const { return genres; };
             
             void AddGenre(Genre genre);
             

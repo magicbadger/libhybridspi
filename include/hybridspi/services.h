@@ -12,7 +12,7 @@ using namespace hybridspi;
 namespace hybridspi
 {
     
-    class Service : public Named, public Described, public GeoLocated, public Linked, public Genred, public MultimediaEnabled, public Keyworded
+    class Service : public Named, public Described, public GeoLocated, public Linked, public Genred, public MediaEnabled, public Keyworded
     {
         
         public:
@@ -21,7 +21,7 @@ namespace hybridspi
             
             void AddBearer(Bearer bearer);
             
-            void RemoveBearer(Bearer bearer);
+            void RemoveBearer(const Bearer *bearer);
             
             vector<Bearer*> Bearers() const { return bearers; };
             
@@ -38,7 +38,7 @@ namespace hybridspi
         
     };    
     
-    class ServiceProvider: public Named, public Described, public MultimediaEnabled, public Linked, public Keywords
+    class ServiceProvider: public Named, public Described, public MediaEnabled, public Linked, public Keyworded
     {
         
         public:
@@ -58,11 +58,11 @@ namespace hybridspi
         
             //ServiceInfo(DateTime created, int version, string originator, ServiceProvider provider);
             
-            DateTime GetCreated() const { return created; };
+            DateTime Created() const { return created; };
             
-            int GetVersion() const { return version; };
+            int Version() const { return version; };
             
-            string GetOriginator() const { return originator; };
+            string Originator() const { return originator; };
             
             //ServiceProvider GetServiceProvider() { return provider; };
             

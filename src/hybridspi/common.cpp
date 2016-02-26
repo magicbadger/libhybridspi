@@ -57,12 +57,7 @@ namespace hybridspi
     Named::Named()
     { }
     
-    vector<Name> Named::GetNames() const
-    {
-        return names;
-    }
-    
-    vector<Name> Named::GetNames(int max_length) const
+    vector<Name> Named::Names(int max_length) const
     {
         vector<Name> result;
         for(auto &name : names)
@@ -83,7 +78,7 @@ namespace hybridspi
         auto it = std::find(names.begin(), names.end(), name);
         if(it != names.end())
             names.erase(it);
-    }    
+    }   
     
     ShortDescription::ShortDescription(string text)
         : Description(text, 128)
@@ -96,12 +91,7 @@ namespace hybridspi
     Described::Described()
     { }
     
-    vector<Description> Described::GetDescriptions() const
-    {
-        return descriptions;
-    }    
-    
-    vector<Description> Described::GetDescriptions(int max_length) const
+    vector<Description> Described::Descriptions(int max_length) const
     {
         vector<Description> result;
         for(auto &description : descriptions)
@@ -127,11 +117,6 @@ namespace hybridspi
     Linked::Linked()
     { }
     
-    vector<Link> Linked::GetLinks() const
-    {
-        return links;
-    }    
-    
     void Linked::AddLink(Link link)
     {
         links.push_back(link);
@@ -156,34 +141,24 @@ namespace hybridspi
             keywords.erase(it);            
     } 
     
-    MultimediaEnabled::MultimediaEnabled()
+    MediaEnabled::MediaEnabled()
     { }
     
-    vector<Multimedia> MultimediaEnabled::GetMultimedia() const
+    void MediaEnabled::AddMedia(Multimedia multimedia)
     {
-        return multimedias;
-    }    
-    
-    void MultimediaEnabled::AddMultimedia(Multimedia multimedia)
-    {
-        multimedias.push_back(multimedia);
+        media.push_back(multimedia);
     }
     
-    void MultimediaEnabled::RemoveMultimedia(const Multimedia &multimedia)
+    void MediaEnabled::RemoveMedia(const Multimedia &multimedia)
     {
-        auto it = std::find(multimedias.begin(), multimedias.end(), multimedia);
-        if(it != multimedias.end())
-            multimedias.erase(it);
+        auto it = std::find(media.begin(), media.end(), multimedia);
+        if(it != media.end())
+            media.erase(it);
     } 
     
     Genred::Genred()
     { }
-    
-    vector<Genre> Genred::GetGenres() const
-    {
-        return genres;
-    }    
-    
+
     void Genred::AddGenre(Genre genre)
     {
         genres.push_back(genre);
@@ -311,6 +286,16 @@ namespace hybridspi
         return ss.str();
     }
     
+    bool DabBearer::equals(const Bearer& other) const
+    {
+        const DabBearer* that = dynamic_cast<const DabBearer*>(&other);
+        return that != nullptr && 
+            (this->ecc == that->ecc &&
+             this->eid == that->eid &&
+             this->sid == that->sid &&
+             this->scids == that->scids);
+    }
+    
     FmBearer::FmBearer(int ecc, int pi, int frequency, int cost, int offset)
         : Bearer(cost, offset), ecc(ecc), pi(pi)
     { }
@@ -322,8 +307,24 @@ namespace hybridspi
         return ss.str();
     }
     
+    bool FmBearer::equals(const Bearer &other) const
+    {
+        const FmBearer* that = dynamic_cast<const FmBearer*>(&other);
+        return that != nullptr && 
+            (this->ecc == that->ecc &&
+             this->pi == that->pi &&
+             this->frequency == that->frequency);
+    }
+    
     IpBearer::IpBearer(string uri, int bitrate, string content, int cost, int offset)
         : DigitalBearer(bitrate, content, cost, offset), uri(uri)
     { }
+    
+    bool IpBearer::equals(const Bearer &other) const
+    {
+        const IpBearer* that = dynamic_cast<const IpBearer*>(&other);
+        return that != nullptr && 
+            (this->uri == that->uri);
+    }    
     
 }

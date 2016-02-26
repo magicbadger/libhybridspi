@@ -1,6 +1,12 @@
 #ifndef HYBRIDSPI_MARSHALL_H
 #define HYBRIDSPI_MARSHALL_H
 
+#include <vector>
+#include <hybridspi/services.h>
+
+using namespace std;
+using namespace hybridspi;
+
 namespace hybridspi
 {
     class Marshaller

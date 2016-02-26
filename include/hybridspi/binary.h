@@ -12,7 +12,7 @@ namespace hybridspi
     namespace binary
     {
         
-        class Ensemble : public Named, public Described, public MultimediaEnabled
+        class Ensemble : public Named, public Described, public MediaEnabled
         {
             public:
             

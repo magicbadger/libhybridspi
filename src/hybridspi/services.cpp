@@ -2,15 +2,15 @@
 
 namespace hybridspi
 {
+        
     ServiceProvider::ServiceProvider()
+        : Named(), Described(), MediaEnabled(), Linked(), Keyworded()
     { }
    
     ServiceInfo::ServiceInfo()
-        : created(system_clock::now()), version(0)
     { }
     
     ServiceInfo::ServiceInfo(DateTime created, int version)
-        : created(created), version(version)
     { }
     
     // ServiceInfo::ServiceInfo(DateTime created, int version, string originator, ServiceProvider provider)
@@ -31,15 +31,27 @@ namespace hybridspi
     
     ostream& operator<<(ostream& os, const ServiceInfo& info)
     {
-        time_t time = system_clock::to_time_t(info.GetCreated());
+        time_t time = system_clock::to_time_t(info.Created());
         string txt("ServiceInfo: services=");
         os << txt;
         return os;
     }
     
     Service::Service(string lookup)
-        : lookup(lookup), Named(), Described(), GeoLocated(), Linked(), Genred(), MultimediaEnable(), Keyworded() 
+        : lookup(lookup), Named(), Described(), GeoLocated(), Linked(), Genred(), MediaEnabled(), Keyworded() 
     { }
+    
+    void Service::AddBearer(Bearer bearer)
+    {
+        bearers.push_back(&bearer);
+    }
+    
+    void Service::RemoveBearer(const Bearer *bearer)
+    {
+        auto it = std::find(bearers.begin(), bearers.end(), bearer);
+        if(it != bearers.end())
+            bearers.erase(it);
+    }
     
     bool Service::operator== (const Service &that) const
     {
