@@ -13,6 +13,9 @@ using Duration = seconds;
 
 using bytes = vector<unsigned char>;
 
+const unsigned int DEFAULT_COST = 0;
+const unsigned int DEFAULT_OFFSET = 0;
+
 namespace hybridspi
 {
     
@@ -251,15 +254,15 @@ namespace hybridspi
     {
         public:
         
-            DabBearer(int ecc, int eid, int sid, int scids, int bitrate, string content, int cost, int offset);
+            DabBearer(int ecc, int eid, int sid, int scids, int bitrate, string content, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
             
-            int ECC() { return ecc; };
+            unsigned int ECC() { return ecc; };
             
-            int EId() { return eid; };
+            unsigned int EId() { return eid; };
             
-            int SId() { return sid; };
+            unsigned int SId() { return sid; };
             
-            int SCIdS() { return scids; };
+            unsigned int SCIdS() { return scids; };
             
             string URI() const; 
             
@@ -267,20 +270,20 @@ namespace hybridspi
         
             bool equals(const Bearer& a) const;
         
-            int ecc;
+            unsigned int ecc;
             
-            int eid;
+            unsigned int eid;
             
-            int sid;
+            unsigned int sid;
             
-            int scids;
+            unsigned int scids;
     };
     
     class FmBearer : public Bearer
     {
         public:
         
-            FmBearer(int ecc, int pi, int frequency, int cost, int offset);
+            FmBearer(int ecc, int pi, int frequency, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
             
             int ECC() { return ecc; };
             

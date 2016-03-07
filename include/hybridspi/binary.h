@@ -70,6 +70,27 @@ namespace hybridspi
             
         };
         
+        class CData
+        {
+            public:
+            
+                CData();
+            
+                CData(vector<unsigned char> value);
+                
+                CData(string value);
+                
+                vector<unsigned char> encode() const;
+                
+                unsigned int size() const { return value.size(); };
+                
+                vector<unsigned char> Value() const { return value; };
+                
+            private:
+            
+                vector<unsigned char> value;
+        };        
+        
         class Element
         {
             
@@ -81,13 +102,19 @@ namespace hybridspi
                 
                 Element(int tag, vector<Attribute> attributes, vector<Element> elements);
             
-                Element(int tag, vector<Attribute> attributes, vector<Element> elements, vector<unsigned char> cdata);
+                Element(int tag, vector<Attribute> attributes, vector<Element> elements, CData data);
                 
                 void AddAttribute(Attribute attribute);
                 
+                vector<Attribute> Attributes() const { return attributes; };
+                
                 void AddElement(Element element);
                 
-                void SetCDATA(vector<unsigned char> cdata);
+                vector<Element> Elements() const { return elements; };
+                
+                void SetData(const CData& data);
+                
+                CData Data() const { return cdata; };
                 
                 vector<unsigned char> encode() const;
                 
@@ -99,11 +126,10 @@ namespace hybridspi
                 
                 vector<Element> elements;
                 
-                vector<unsigned char> cdata;
+                CData cdata;
             
         };
-        
-        
+       
         
         // encode functions
         
@@ -112,7 +138,7 @@ namespace hybridspi
         template<size_t size>
         vector<unsigned char> encode_number(int number);
         
-        int timepoint_to_mjd(int timepoint);        
+        unsigned int timepoint_to_mjd(DateTime timepoint);        
         
         vector<unsigned char> encode_timepoint(DateTime timepoint);
         
@@ -131,6 +157,21 @@ namespace hybridspi
         Element build_media(Multimedia media);
         
         Element build_service(Service service);
+        
+        Element build_genre(Genre& genre);
+        
+        Element build_bearer(Bearer* bearer);
+        
+        
+        // exceptions
+        
+        class unable_to_encode_bearer: public exception
+        {
+            virtual const char* what() const throw()
+            {
+                return "Invalid bearer";
+            }
+        };
         
     }
 }

@@ -1,5 +1,6 @@
 #include <hybridspi/services.h>
 #include <hybridspi/xml.h>
+#include <hybridspi/util.h>
 #include <iostream>
 
 using namespace std;
@@ -28,13 +29,13 @@ int main()
     service.AddMedia(Multimedia("http://owdo.thisisglobal.com/2.0/id/44/logo/320x240.jpg", "image/png", 320, 240));
 
     // bearers
-    service.AddBearer(DabBearer(0xe1, 0xc181, 0xc36b, 0x0, 128, "audio/mpeg", 20, 2500));
-    service.AddBearer(IpBearer("http://media-ice.musicradio.com/HeartBristol", 48, "audio/aacp", 70, 16000));
+    service.AddBearer(new DabBearer(0xe1, 0xc181, 0xc36b, 0x0, 128, "audio/mpeg", 20, 2500));
+    service.AddBearer(new IpBearer("http://media-ice.musicradio.com/HeartBristol", 48, "audio/aacp", 70, 16000));
 
     info.AddService(service);
 
     XmlMarshaller marshaller;
-    marshaller.Marshall(info);
+    cout << marshaller.Marshall(info) << endl;
 
     return 0;
 }

@@ -6,16 +6,10 @@ namespace hybridspi
     ServiceProvider::ServiceProvider()
         : Named(), Described(), MediaEnabled(), Linked(), Keyworded()
     { }
-   
-    ServiceInfo::ServiceInfo()
-    { }
     
     ServiceInfo::ServiceInfo(DateTime created, int version)
+        : created(created), version(version)
     { }
-    
-    // ServiceInfo::ServiceInfo(DateTime created, int version, string originator, ServiceProvider provider)
-    //     : created(created), version(version), originator(originator), provider(provider)
-    // { }
     
     void ServiceInfo::AddService(Service service)
     {
@@ -41,9 +35,9 @@ namespace hybridspi
         : lookup(lookup), Named(), Described(), GeoLocated(), Linked(), Genred(), MediaEnabled(), Keyworded() 
     { }
     
-    void Service::AddBearer(Bearer bearer)
+    void Service::AddBearer(Bearer* bearer)
     {
-        bearers.push_back(&bearer);
+        bearers.push_back(bearer);
     }
     
     void Service::RemoveBearer(const Bearer *bearer)

@@ -27,13 +27,45 @@ src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} -Wno-shift-count-ove
 src_libhybridspi_la_CXXFLAGS = @LIBHYBRIDSPI_EXTRA_CXXFLAGS@
 src_libhybridspi_la_LIBADD = -L${LIBMOT_LIBS}
 
+# 
+# Binaries
+#
+bin_PROGRAMS = src/write_binary
+
+src_write_binary_SOURCES = \
+    src/write_binary.cpp
+
+src_write_binary_CPPFLAGS = -Iinclude
+src_write_binary_LDADD = -Lsrc/.libs -lhybridspi
+
+
 #
 # Tests
 #
 test_apps = \
+    tests/test_encode_timepoint \
+    tests/test_encode_cdata \
+    tests/test_build_name \
+    tests/test_build_bearer \
     tests/test_serviceinfo \
     tests/serviceinfo_minimal_xml \
     tests/serviceinfo_minimal_binary
+
+tests_test_encode_timepoint_SOURCES = tests/test_encode_timepoint.cpp 
+tests_test_encode_timepoint_CPPFLAGS = -Iinclude
+tests_test_encode_timepoint_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_test_encode_cdata_SOURCES = tests/test_encode_cdata.cpp 
+tests_test_encode_cdata_CPPFLAGS = -Iinclude
+tests_test_encode_cdata_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_test_build_name_SOURCES = tests/test_build_name.cpp 
+tests_test_build_name_CPPFLAGS = -Iinclude
+tests_test_build_name_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_test_build_bearer_SOURCES = tests/test_build_bearer.cpp 
+tests_test_build_bearer_CPPFLAGS = -Iinclude
+tests_test_build_bearer_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_test_serviceinfo_SOURCES = tests/test_serviceinfo.cpp 
 tests_test_serviceinfo_CPPFLAGS = -Iinclude

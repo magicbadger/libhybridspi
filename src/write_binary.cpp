@@ -39,8 +39,7 @@ int main()
 
     BinaryMarshaller marshaller(ensemble);
     vector<unsigned char> bytes = marshaller.Marshall(info);
-    cout << bytes.size() << " bytes" << endl;
-    cout << bytes_to_hex(bytes) << endl;
+    cout << bytes;
 
     return 1;
 }

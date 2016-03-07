@@ -1,5 +1,8 @@
 #include <hybridspi/binary.h>
 
+// #include <iostream>
+// #include <hybridspi/util.h>
+
 using namespace std;
 using namespace std::chrono;
 
@@ -40,8 +43,6 @@ namespace hybridspi
             Element serviceInformationElement(0x03);
             serviceInformationElement.AddAttribute(Attribute(0x81, encode_timepoint(info.Created())));
             
-            vector<unsigned char> t = encode_number<16>(8);
-            
             if(info.Version() > 0)
             {
                 Attribute versionAttribute(0x80, encode_number<16>(info.Version()));
@@ -74,7 +75,7 @@ namespace hybridspi
             return bits_to_bytes(data);
         }
             
-        int timepoint_to_mjd(DateTime timepoint)
+        unsigned int timepoint_to_mjd(DateTime timepoint)
         {            
             time_t tt = system_clock::to_time_t(timepoint);
             tm tm = *gmtime(&tt);
@@ -89,45 +90,49 @@ namespace hybridspi
                 + 275 * month / 9
                 + day
                 + 1721028
-                - 2400;  
+                - 2400000;  
         }        
                        
         vector<unsigned char> encode_timepoint(DateTime timepoint)
         {
-            int mjd = timepoint_to_mjd(timepoint);
+            unsigned int mjd = timepoint_to_mjd(timepoint);
             system_clock::duration d = timepoint.time_since_epoch();
-            seconds s = duration_cast<seconds>(d);
+            seconds epoch = duration_cast<seconds>(d);
             
-            if(s.count() > 0)
+            hours hh = duration_cast<hours>(epoch) % 24;
+            minutes mm = duration_cast<minutes>(epoch % hours(1));
+            seconds ss = duration_cast<seconds>(epoch % minutes(1));
+            
+            vector<unsigned char> bytes;
+            if(ss.count() > 0) // UTC flag true
             {
-                hours hh = duration_cast<hours>(s) % 24;
-                minutes mm = duration_cast<minutes>(s % hours(1));
-                seconds ss = duration_cast<seconds>(s % minutes(1));
-                milliseconds msec = duration_cast<milliseconds>(s % seconds(1));
-
-                // only seconds precision right now
-                bitset<16> lower(0 + // millis (10)
-                                (ss.count() << 10)); // seconds (6)
-                bitset<32> bits((mm.count()) + // minutes (6)
-                            (hh.count() << 6) + // hours (5)
-                            (1 << 11) + // UTC flag (1)
-                            (0 << 12) + // RFU (2)
-                            (mjd << 14) + // MJD (17)
-                            (1 << 31)); // validity (1)
-                return bits_to_bytes(bits) + bits_to_bytes(lower);
+                milliseconds msec = duration_cast<milliseconds>(epoch % seconds(1));
+                
+                bitset<48> bits(0 + // RFA (10)
+                                (ss.count() << 10) + // seconds (6)
+                                (mm.count() << 16) + // minutes (6)
+                                (hh.count() << 22) + // hours (5)
+                                (1 << 27) + // UTC flag (1)
+                                (0 << 28) + // LTO flag (1)
+                                (0 << 29) + // RFA (1)
+                                ((unsigned long)mjd << 30)); // MJD (17)
+                bytes = bits_to_bytes(bits);
             }
-            else
+            else // UTC flag false
             {
-                hours hh = duration_cast<hours>(s) % 24;
-                minutes mm = duration_cast<minutes>(s % hours(1));
+                hours hh = duration_cast<hours>(epoch) % 24;
+                minutes mm = duration_cast<minutes>(epoch % hours(1));
+                
                 bitset<32> bits((mm.count()) + // minutes (6)
                             (hh.count() << 6) + // hours (5)
                             (0 << 11) + // UTC flag (1)
-                            (0 << 12) + // RFU (2)
-                            (mjd << 14) + // MDJ (17)
-                            (1 << 31)); // validity (1)
-                return bits_to_bytes(bits);
-            }            
+                            (0 << 12) + // LTO flag (1)
+                            (0 << 13) + // RFA (1)
+                            (mjd << 14)); // MJD (17)
+                bytes = bits_to_bytes(bits);
+            }          
+            
+            return bytes;  
         }
         
         vector<unsigned char> encode_ensembleId(int ecc, int eid)
@@ -138,7 +143,7 @@ namespace hybridspi
         }
         
         Element::Element(int tag)
-            : tag(tag)
+            : tag(tag), cdata(vector<unsigned char>())
         { }
         
         Element::Element(int tag, vector<Attribute> attributes)
@@ -149,8 +154,8 @@ namespace hybridspi
             : tag(tag), attributes(attributes), elements(elements)
         { }
         
-        Element::Element(int tag, vector<Attribute> attributes, vector<Element> elements, vector<unsigned char> cdata)
-            : tag(tag), attributes(attributes), elements(elements), cdata(cdata)
+        Element::Element(int tag, vector<Attribute> attributes, vector<Element> elements, CData data)
+            : tag(tag), attributes(attributes), elements(elements), cdata(data)
         { }
         
         void Element::AddAttribute(Attribute attribute)
@@ -163,9 +168,9 @@ namespace hybridspi
             elements.push_back(element);
         }
         
-        void Element::SetCDATA(vector<unsigned char> cdata)
+        void Element::SetData(const CData& data)
         {
-            cdata = cdata;
+            cdata = data;
         }
                 
         vector<unsigned char> Element::encode() const
@@ -187,37 +192,39 @@ namespace hybridspi
             // encode CDATA
             if(cdata.size() > 0)
             {
-                value = value + cdata;
+                value = value + cdata.encode();
             }
             
-            vector<unsigned char> data;
+            vector<unsigned char> bytes;
             
             // b0-b7: tag
-            data = data + encode_number<8>(tag);
+            bytes = bytes + encode_number<8>(tag);
 
             // b8-15: element data length (0-253 bytes)
             if(value.size() <= 253)
             {
-                data = data + encode_number<8>(value.size());             
+                bytes = bytes + encode_number<8>(value.size());             
             }
             // b8-31: extended element length (256-65536 bytes)            
             else if(value.size() >= 254 && value.size() <= 1<<16)
             {
-                data = data + encode_number<24>(0xfe + (value.size() << 8));                                            
+                bytes = bytes + encode_number<8>(0xfe);
+                bytes = bytes + encode_number<16>(value.size());                                             
             }
             // b8-39: extended element length (65537-16777216 bytes)            
             else if(value.size() > 1<<16 && value.size() <= 1<<24)
             {
-                data = data + encode_number<32>(0xff + (value.size() << 8));             
+                bytes = bytes + encode_number<8>(0xff); 
+                bytes = bytes + encode_number<24>(value.size());             
             }
             else
             {
-                throw std::length_error("attribute value datalength exceeds the maximum allowed by the extended element length (24bits)");
+                throw std::length_error("element value datalength exceeds the maximum allowed by the extended element length (24bits)");
             }
             
-            data = data + value;
+            bytes = bytes + value;
             
-            return data;            
+            return bytes;            
         }
         
         template<size_t size>
@@ -235,33 +242,83 @@ namespace hybridspi
 
         vector<unsigned char> Attribute::encode() const
         {   
+            
             vector<unsigned char> bytes;
             
             // b0-b7: tag
             bytes = bytes + encode_number<8>(tag);
 
-            // b8-15: element data length (0-253 bytes)
-            // b16-31: extended element length (256-65536 bytes)
-            // b16-39: extended element length (65537-16777216 bytes)
+            // b8-15: attribute data length (0-253 bytes)
             if(value.size() <= 253)
             {
-                bytes = bytes + encode_number<8>(value.size());
+                bytes = bytes + encode_number<8>(value.size());             
             }
+            // b8-31: extended attribute length (256-65536 bytes)            
             else if(value.size() >= 254 && value.size() <= 1<<16)
             {
-                bytes = bytes + encode_number<24>(0xfe + (value.size() << 8));
+                bytes = bytes + encode_number<8>(0xfe);
+                bytes = bytes + encode_number<16>(value.size());                                             
             }
+            // b8-39: extended attribute length (65537-16777216 bytes)            
             else if(value.size() > 1<<16 && value.size() <= 1<<24)
             {
-                bytes = bytes + encode_number<32>(0xff + (value.size() < 8));             
+                bytes = bytes + encode_number<8>(0xff); 
+                bytes = bytes + encode_number<24>(value.size());             
             }
             else
             {
                 throw std::length_error("attribute value datalength exceeds the maximum allowed by the extended element length (24bits)");
             }
             
+            bytes = bytes + value;
+            
             return bytes;
         }
+        
+        CData::CData()
+        { }
+        
+        CData::CData(vector<unsigned char> value)
+            : value(value)
+        { }
+        
+        CData::CData(string value)
+            : value(encode_string(value))
+        { }
+        
+        vector<unsigned char> CData::encode() const
+        {   
+            vector<unsigned char> bytes;
+            
+            // b0-b7: tag
+            bytes = bytes + encode_number<8>(0x01);
+
+            // b8-15: cdata data length (0-253 bytes)
+            if(value.size() <= 253)
+            {
+                bytes = bytes + encode_number<8>(value.size());             
+            }
+            // b8-31: extended cdata length (256-65536 bytes)            
+            else if(value.size() >= 254 && value.size() <= 1<<16)
+            {
+                bytes = bytes + encode_number<8>(0xfe);
+                bytes = bytes + encode_number<16>(value.size());                                             
+            }
+            // b8-39: extended cdata length (65537-16777216 bytes)            
+            else if(value.size() > 1<<16 && value.size() <= 1<<24)
+            {
+                bytes = bytes + encode_number<8>(0xff); 
+                bytes = bytes + encode_number<24>(value.size());             
+            }
+            else
+            {
+                throw std::length_error("cdata value datalength exceeds the maximum allowed by the extended element length (24bits)");
+            }
+            
+            bytes = bytes + value;
+            
+            return bytes;
+        }        
         
         Element build_ensemble(Ensemble ensemble, ServiceInfo info)
         {
@@ -310,7 +367,7 @@ namespace hybridspi
             
             Element mediagroupElement(0x13);
             Element descriptionElement(tag);
-            descriptionElement.SetCDATA(encode_string(description.Text()));
+            descriptionElement.SetData(encode_string(description.Text()));
             mediagroupElement.AddElement(descriptionElement);
             return mediagroupElement;
         }        
@@ -323,7 +380,8 @@ namespace hybridspi
             else { tag = 0x12; }
             
             Element nameElement(tag);
-            nameElement.SetCDATA(encode_string(name.Text()));
+            nameElement.SetData(CData(name.Text()));
+ 
             return nameElement;
         }
         
@@ -357,12 +415,68 @@ namespace hybridspi
             return mediagroupElement;        
         }
         
-        Element build_genre(Genre genre)
+        Element build_genre(Genre& genre)
         {
             Element genreElement(0x14);
             Attribute hrefAttribute(0x80, encode_string(genre.Href()));
             genreElement.AddAttribute(hrefAttribute);
             return genreElement;
+        }
+        
+        Element build_bearer(Bearer* bearer)
+        {
+            Element bearerElement(0x29);
+
+            if(dynamic_cast<DabBearer*>(bearer) != nullptr) 
+            {
+                DabBearer *dabBearer = dynamic_cast<DabBearer*>(bearer);
+                
+                int sid = dabBearer->SId();
+                bool audio = true;
+                if(sid > (1<<16)) audio = false;
+                
+                vector<unsigned char> bytes;
+                if(audio)
+                {
+                    bitset<32> lower(dabBearer->SId() + // SId (16)
+                                    ((unsigned int)dabBearer->EId() << 16)); // EId (16)
+                    
+                    bitset<16> upper(dabBearer->ECC() + // ECC(8)
+                                        (dabBearer->SCIdS() << 8) + // SCIdS(4)
+                                        (0 << 12) + // SId flag (1)
+                                        (0 << 13) + // XPAD flag (1)
+                                        (1 << 14)); // Ensemble flag (1)
+                    bytes = bytes + bits_to_bytes(upper);
+                    bytes = bytes + bits_to_bytes(lower);
+                    
+                }
+                else
+                {
+                    bitset<64> bits = (dabBearer->SId() + // SId (32)
+                                        (dabBearer->EId() << 32) + // EId (16)
+                                        (dabBearer->ECC() << 48) + // ECC (8)
+                                        (dabBearer->SCIdS() << 56) + // SCIdS (4)
+                                        (0 << 60) + // SId flag
+                                        (0 << 61) + // XPAD flag
+                                        (1 << 62)); // Ensemble flag
+                    bytes = bits_to_bytes(bits);
+                }
+                    
+                Attribute idAttribute(0x80, bytes);   
+                bearerElement.AddAttribute(idAttribute);
+            }
+            else if(dynamic_cast<IpBearer*>(bearer) != nullptr)
+            {
+                IpBearer *ipBearer = dynamic_cast<IpBearer*>(bearer);
+                Attribute urlAttribute(0x82, encode_string(ipBearer->URI()));
+                bearerElement.AddAttribute(urlAttribute);           
+            }
+            else
+            {
+                throw unable_to_encode_bearer();
+            }   
+            
+            return bearerElement;
         }
         
         Element build_service(Service service)
@@ -372,53 +486,10 @@ namespace hybridspi
             // bearers
             for(auto *bearer : service.Bearers())
             {
-                Element bearerElement(0x29);
-
-                if(dynamic_cast<DabBearer*>(bearer)) 
-                {
-                    DabBearer *dabBearer = dynamic_cast<DabBearer*>(bearer);
-                    
-                    int sid = dabBearer->SId();
-                    bool audio = true;
-                    if(sid > (1<<16)) audio = false;
-                    
-                    vector<unsigned char> bytes;
-                    if(audio)
-                    {
-                        bitset<48> bits = (dabBearer->SId() + // SId (16)
-                                           (dabBearer->EId() << 16) + // EId (16)
-                                           (dabBearer->ECC() << 32) + // ECC (8)
-                                           (dabBearer->SCIdS() << 40) + // SCIdS (4)
-                                           (0 << 44) + // SId flag
-                                           (0 << 45) + // XPAD flag
-                                           (1 << 46)); // Ensemble flag 
-                        bytes = bits_to_bytes(bits);
-                    }
-                    else
-                    {
-                        bitset<64> bits = (dabBearer->SId() + // SId (32)
-                                           (dabBearer->EId() << 32) + // EId (16)
-                                           (dabBearer->ECC() << 48) + // ECC (8)
-                                           (dabBearer->SCIdS() << 56) + // SCIdS (4)
-                                           (0 << 60) + // SId flag
-                                           (0 << 61) + // XPAD flag
-                                           (1 << 62)); // Ensemble flag   
-                        bytes = bits_to_bytes(bits);
-                    }
-                     
-                    Attribute idAttribute(0x80, bytes);   
-                    bearerElement.AddAttribute(idAttribute);              
-                }
-                else if(dynamic_cast<IpBearer*>(bearer))
-                {
-                    IpBearer *ipBearer = dynamic_cast<IpBearer*>(bearer);
-                    Attribute urlAttribute(0x82, encode_string(ipBearer->URI()));
-                    bearerElement.AddAttribute(urlAttribute);              
-                }
-                else
-                {
-                    continue;
-                }
+                if(dynamic_cast<DabBearer*>(bearer) == nullptr
+                 && dynamic_cast<IpBearer*>(bearer) == nullptr) continue;
+                
+                Element bearerElement = build_bearer(bearer);
                 
                 serviceElement.AddElement(bearerElement);
             }

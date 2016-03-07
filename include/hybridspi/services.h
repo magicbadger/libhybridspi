@@ -19,7 +19,7 @@ namespace hybridspi
         
             Service(string lookup);
             
-            void AddBearer(Bearer bearer);
+            void AddBearer(Bearer *bearer);
             
             void RemoveBearer(const Bearer *bearer);
             
@@ -51,12 +51,8 @@ namespace hybridspi
     {
         
         public:
-        
-            ServiceInfo();
-        
-            ServiceInfo(DateTime created, int version);
-        
-            //ServiceInfo(DateTime created, int version, string originator, ServiceProvider provider);
+
+            ServiceInfo(DateTime created = system_clock::now(), int version = 0);
             
             DateTime Created() const { return created; };
             
