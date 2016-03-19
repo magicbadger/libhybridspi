@@ -12,7 +12,8 @@ using namespace hybridspi;
 namespace hybridspi
 {
     
-    class Service : public Named, public Described, public GeoLocated, public Linked, public Genred, public MediaEnabled, public Keyworded
+    class Service : public Named, public Described, public GeoLocated, 
+                    public Linked, public Genred, public MediaEnabled, public Keyworded
     {
         
         public:
@@ -38,7 +39,8 @@ namespace hybridspi
         
     };    
     
-    class ServiceProvider: public Named, public Described, public MediaEnabled, public Linked, public Keyworded
+    class ServiceProvider: public Named, public Described, public MediaEnabled, public Linked, 
+                           public Keyworded
     {
         
         public:
@@ -54,9 +56,27 @@ namespace hybridspi
 
             ServiceInfo(DateTime created = system_clock::now(), int version = 0);
             
+            ServiceInfo* SetCreated(DateTime created)
+            {
+                this->created = created;
+                return this;
+            }
+            
             DateTime Created() const { return created; };
             
+            ServiceInfo* SetVersion(int version)
+            {
+                this->version = version;
+                return this;
+            }            
+            
             int Version() const { return version; };
+            
+            ServiceInfo* SetOriginator(string originator)
+            {
+                this->originator = originator;
+                return this;
+            }
             
             string Originator() const { return originator; };
             

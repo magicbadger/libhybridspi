@@ -23,21 +23,26 @@ src_libhybridspi_la_SOURCES = \
     src/hybridspi/groups.cpp \
     src/hybridspi/services.cpp 
 
-src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} -Wno-shift-count-overflow
+src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} -Wno-shift-count-overflow
 src_libhybridspi_la_CXXFLAGS = @LIBHYBRIDSPI_EXTRA_CXXFLAGS@
-src_libhybridspi_la_LIBADD = -L${LIBMOT_LIBS}
+src_libhybridspi_la_LIBADD = -L${LIBMOT_LIBS} ${TINYXML2_LIBS}
 
 # 
 # Binaries
 #
-bin_PROGRAMS = src/write_binary
+bin_PROGRAMS = \
+    src/write_binary \
+    src/write_xml
 
 src_write_binary_SOURCES = \
     src/write_binary.cpp
-
 src_write_binary_CPPFLAGS = -Iinclude
 src_write_binary_LDADD = -Lsrc/.libs -lhybridspi
 
+src_write_xml_SOURCES = \
+    src/write_xml.cpp
+src_write_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
+src_write_xml_LDADD = -Lsrc/.libs -lhybridspi -ltinyxml2
 
 #
 # Tests

@@ -94,10 +94,6 @@ namespace hybridspi
         public:
         
             Description(string text, int max_length);
-            
-            // conversion constructor will return the most appropriate subtype
-            //Description(const char *x);
-
         
     };
     
@@ -235,7 +231,16 @@ namespace hybridspi
     {
         public:
         
-            DigitalBearer(int bitrate, string content, int cost, int offset);
+            DigitalBearer(string content, int cost, int offset);
+            
+            void SetBitrate(int bitrate)
+            {
+                this->bitrate = bitrate;
+            }
+            
+            int Bitrate() { return bitrate; };
+            
+            string Content() { return content; };
             
             virtual string URI() const = 0;  
             
@@ -254,7 +259,7 @@ namespace hybridspi
     {
         public:
         
-            DabBearer(int ecc, int eid, int sid, int scids, int bitrate, string content, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
+            DabBearer(int ecc, int eid, int sid, int scids, string content, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
             
             unsigned int ECC() { return ecc; };
             
@@ -308,7 +313,7 @@ namespace hybridspi
     {
         public:
         
-            IpBearer(string uri, int bitrate, string content, int cost, int offset);
+            IpBearer(string uri, string content, int cost, int offset);
             
             string URI() const { return uri; };
             
@@ -324,11 +329,23 @@ namespace hybridspi
     {
         public:
         
-            Link(string url, string content, string description);
+            Link(string uri, string content = "", string description = "");
             
-            string Url() { return url; };
+            string URI() { return uri; };
+            
+            Link* SetContent(string content)
+            {
+                this->content = content;
+                return this;
+            }
             
             string Content() { return content; };
+            
+            Link* SetDescription(string description)
+            {
+                this->description = description;
+                return this;
+            }
             
             string Description() { return description; };
             
@@ -338,7 +355,7 @@ namespace hybridspi
             
         private:
         
-            string url;
+            string uri;
             
             string content;
             
@@ -399,7 +416,7 @@ namespace hybridspi
             
             string Location() { return location; };
             
-            string ContentType() { return content; };
+            string Content() { return content; };
             
             int Height() { return height; };
             
@@ -485,6 +502,8 @@ namespace hybridspi
         public:
         
             void AddKeyword(string keyword);
+        
+            void AddKeywords(string keywords);
             
             void RemoveKeyword(const string &keyword);
             

@@ -1,6 +1,7 @@
 #include <hybridspi/services.h>
 #include <hybridspi/binary.h>
 #include <hybridspi/util.h>
+#include <sstream>
 #include <iostream>
 
 using namespace std;
@@ -9,7 +10,13 @@ using namespace hybridspi::binary;
 
 int main()
 {
-    ServiceInfo info;
+    tm t = {};
+    stringstream ss("2015-09-21T06:30:15");
+    ss >> get_time(&t, "%Y-%m-%dT%H:%M:%S");
+    auto epoch = mktime(&t);
+    auto tp = std::chrono::system_clock::from_time_t(epoch);
+
+    ServiceInfo info(tp);
     
     // sample service
     Service service("http://www.heart.co.uk/bristol");
@@ -20,7 +27,11 @@ int main()
     service.AddName(LongName("Heart Bristol"));
 
     // descriptions
-    //service.AddDescription(ShortDescription(string("More Music Variety")));
+    service.AddDescription(ShortDescription("More Music Variety"));
+    
+    // links
+    service.AddLink(Link("http://www.heart.co.uk/bristol", "text/html", "Station website"));
+    service.AddLink(Link("mailto:bristol@heart.co.uk"));
 
     // logos (3 local, 1 remote)
     service.AddMedia(Multimedia("32x32.png", "image/png", 32, 32));
@@ -29,17 +40,17 @@ int main()
     service.AddMedia(Multimedia("http://owdo.thisisglobal.com/2.0/id/44/logo/320x240.jpg", "image/png", 320, 240));
 
     // bearers
-    service.AddBearer(new DabBearer(0xe1, 0xc181, 0xc36b, 0x0, 128, "audio/mpeg", 20, 2500));
-    service.AddBearer(new IpBearer("http://media-ice.musicradio.com/HeartBristol", 48, "audio/aacp", 70, 16000));
+    service.AddBearer(new DabBearer(0xe1, 0xc181, 0xc36b, 0x0, "audio/mpeg", 20, 2500));
+    service.AddBearer(new IpBearer("http://media-ice.musicradio.com/HeartBristol", "audio/aacp", 70, 16000));
 
     info.AddService(service);
     
-    // ensemble
+    // ensemble - only used for binary marshalling
     Ensemble ensemble(0xe1, 0xc181);
 
     BinaryMarshaller marshaller(ensemble);
     vector<unsigned char> bytes = marshaller.Marshall(info);
     cout << bytes;
 
-    return 1;
+    return 0;
 }

@@ -1,6 +1,7 @@
 #include <hybridspi/common.h>
 
 #include <sstream>
+#include <string>
 
 namespace hybridspi
 {
@@ -40,13 +41,13 @@ namespace hybridspi
         : Name(text, 8)
     { }
     
-    Link::Link(string url, string content, string description)
-        : url(url), content(content), description(description)
+    Link::Link(string uri, string content, string description)
+        : uri(uri), content(content), description(description)
     { }
     
     bool Link::operator== (const Link &that) const
     {
-        return url == that.url;
+        return uri == that.uri;
     }
     
     bool Link::operator!= (const Link &that) const
@@ -78,7 +79,11 @@ namespace hybridspi
         auto it = std::find(names.begin(), names.end(), name);
         if(it != names.end())
             names.erase(it);
-    }   
+    }  
+    
+    Description::Description(string text, int max_length)
+        : BaseText(text, max_length)
+    { } 
     
     ShortDescription::ShortDescription(string text)
         : Description(text, 128)
@@ -132,6 +137,16 @@ namespace hybridspi
     void Keyworded::AddKeyword(string keyword)
     {
         keywords.push_back(keyword);
+    }
+    
+    void Keyworded::AddKeywords(string keywords)
+    {
+        auto t = strtok(const_cast<char*>(keywords.c_str()), ",");
+        while(t != NULL)
+        {
+            this->AddKeyword(t);
+            t = strtok(NULL, ",");
+        }
     }
     
     void Keyworded::RemoveKeyword(const string &keyword)
@@ -271,19 +286,20 @@ namespace hybridspi
         return !(*this == that);
     }  
     
-    DigitalBearer::DigitalBearer(int bitrate, string content, int cost, int offset)
-        : Bearer(cost, offset), bitrate(bitrate), content(content)
+    DigitalBearer::DigitalBearer(string content, int cost, int offset)
+        : Bearer(cost, offset), content(content)
     { }
     
-    DabBearer::DabBearer(int ecc, int eid, int sid, int scids, int bitrate, string content, int cost, int offset)
-        : DigitalBearer(bitrate, content, cost, offset), ecc(ecc), eid(eid), sid(sid), scids(scids)
+    DabBearer::DabBearer(int ecc, int eid, int sid, int scids, string content, int cost, int offset)
+        : DigitalBearer(content, cost, offset), ecc(ecc), eid(eid), sid(sid), scids(scids)
     { }
     
     string DabBearer::URI() const
-    {
-        stringstream ss;
-        ss << "dab://" << ecc << "." << eid << "." << sid << "." << scids;
-        return ss.str();
+    {   
+        char* x = new char[17];
+        sprintf(x, "dab:%03x.%04x.%04x.%01d", (eid >> 4 & 0xf00) + ecc, eid, sid, scids);
+        string s(x);
+        return s;        
     }
     
     bool DabBearer::equals(const Bearer& other) const
@@ -297,14 +313,15 @@ namespace hybridspi
     }
     
     FmBearer::FmBearer(int ecc, int pi, int frequency, int cost, int offset)
-        : Bearer(cost, offset), ecc(ecc), pi(pi)
+        : Bearer(cost, offset), ecc(ecc), pi(pi), frequency(frequency)
     { }
     
     string FmBearer::URI() const
     {
-        stringstream ss;
-        ss << "fm://" << ecc << "." << pi << "." << frequency;
-        return ss.str();
+        char* x = new char[17];
+        sprintf(x, "fm:%03x.%04x.%05d", (pi >> 4 & 0xf00) + ecc, pi, frequency/10);
+        string s(x);
+        return s;
     }
     
     bool FmBearer::equals(const Bearer &other) const
@@ -316,8 +333,8 @@ namespace hybridspi
              this->frequency == that->frequency);
     }
     
-    IpBearer::IpBearer(string uri, int bitrate, string content, int cost, int offset)
-        : DigitalBearer(bitrate, content, cost, offset), uri(uri)
+    IpBearer::IpBearer(string uri, string content, int cost, int offset)
+        : DigitalBearer(content, cost, offset), uri(uri)
     { }
     
     bool IpBearer::equals(const Bearer &other) const

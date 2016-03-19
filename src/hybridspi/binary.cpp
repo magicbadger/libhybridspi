@@ -392,7 +392,7 @@ namespace hybridspi
             Element mediaElement(0x2b);
             
             // content type
-            Attribute contentTypeAttribute(0x80, encode_string(media.ContentType()));
+            Attribute contentTypeAttribute(0x80, encode_string(media.Content()));
             mediaElement.AddAttribute(contentTypeAttribute);
             
             // location
@@ -402,7 +402,7 @@ namespace hybridspi
             // dimensions
             if(media.Height() > 0)
             {
-                Attribute heightAttribute(0x84, encode_number<16>(media.Height()));
+                Attribute heightAttribute(0x85, encode_number<16>(media.Height()));
                 mediaElement.AddAttribute(heightAttribute);
             }
             if(media.Width() > 0)
@@ -479,6 +479,23 @@ namespace hybridspi
             return bearerElement;
         }
         
+        Element build_link(Link link)
+        {
+            Element linkElement(0x18);
+            linkElement.AddAttribute(Attribute(0x80, encode_string(link.URI())));
+            
+            if(!link.Description().empty())
+            {
+                linkElement.AddAttribute(Attribute(0x83, encode_string(link.Description())));
+            }
+            if(!link.Content().empty())
+            {
+                linkElement.AddAttribute(Attribute(0x81, encode_string(link.Content())));
+            }
+                        
+            return linkElement;
+        }
+        
         Element build_service(Service service)
         {
             Element serviceElement(0x28);
@@ -520,6 +537,13 @@ namespace hybridspi
             {
                 Element genreElement = build_genre(genre);
                 serviceElement.AddElement(genreElement);
+            }
+            
+            // links
+            for(auto &link : service.Links())
+            {
+                Element linkElement = build_link(link);
+                serviceElement.AddElement(linkElement);
             }
 
             // TODO keywords

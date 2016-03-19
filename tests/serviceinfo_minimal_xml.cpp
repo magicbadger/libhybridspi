@@ -20,7 +20,7 @@ int main()
     service.AddName(LongName("Heart Bristol"));
 
     // descriptions
-    //service.AddDescription(ShortDescription(string("More Music Variety")));
+    service.AddDescription(ShortDescription(string("More Music Variety")));
 
     // logos (3 local, 1 remote)
     service.AddMedia(Multimedia("32x32.png", "image/png", 32, 32));
@@ -31,6 +31,10 @@ int main()
     // bearers
     service.AddBearer(new DabBearer(0xe1, 0xc181, 0xc36b, 0x0, 128, "audio/mpeg", 20, 2500));
     service.AddBearer(new IpBearer("http://media-ice.musicradio.com/HeartBristol", 48, "audio/aacp", 70, 16000));
+
+    // links
+    service.AddLink(Link("http://www.heart.co.uk/bristol"));
+    service.AddLink(Link("mailto:bristol@heart.co.uk"));
 
     info.AddService(service);
 

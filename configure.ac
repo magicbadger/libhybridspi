@@ -126,6 +126,7 @@ esac
 
 # Checks for libraries
 PKG_CHECK_MODULES([LIBMOT], [mot]) # libmot
+PKG_CHECK_MODULES([TINYXML2], [tinyxml2 >= 3.0.0]) # tinyxml2
 
 # Check whether to build docs / install man pages
 LIBHYBRIDSPI_CHECK_DOC_BUILD
