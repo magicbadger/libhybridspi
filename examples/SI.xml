@@ -1,0 +1,43 @@
+<serviceInformation xmlns="http://www.worlddab.org/schemas/spi/31" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xml="http://www.w3.org/XML/1998/namespace" xsi:schemaLocation="http://www.worlddab.org/schemas/spi/31 spi_31.xsd" creationTime="2014-04-25T00:05:31" originator="Global">
+    <services>
+        <service>
+            <bearer uri="dab:ce1.c185.c479.0" cost="20" offset="2000" mimeValue="audio/mpeg"/>
+            <bearer uri="fm:ce1.c479.09580" cost="30"/>
+            <bearer uri="http://media-ice.musicradio.com/Capital" cost="40" offset="4000" mimeValue="audio/aacp" bitrate="48"/>
+            <bearer uri="http://media-ice.musicradio.com/Capital" cost="40" offset="4000" mimeValue="audio/mpeg" bitrate="48"/>
+            <shortName>Capital</shortName>
+            <mediumName>Capital FM</mediumName>
+            <longName>Capital London</longName>
+            <mediaDescription>
+                <shortDescription>The UK's No.1 Hit Music Station</shortDescription>
+            </mediaDescription>
+            <mediaDescription>
+                <multimedia url="http://owdo.thisisglobal.com/2.0/id/25/logo/32x32.png" mimeValue="image/png" width="32" height="32"/>
+            </mediaDescription>
+            <mediaDescription>
+                <multimedia url="http://owdo.thisisglobal.com/2.0/id/25/logo/112x32.png" mimeValue="image/png" width="112" height="32"/>
+            </mediaDescription>
+            <mediaDescription>
+                <multimedia url="http://owdo.thisisglobal.com/2.0/id/25/logo/128x128.png" mimeValue="image/png" width="128" height="128"/>
+            </mediaDescription>
+            <mediaDescription>
+                <multimedia url="http://owdo.thisisglobal.com/2.0/id/25/logo/320x240.jpg" mimeValue="image/png" width="320" height="240"/>
+            </mediaDescription>
+            <mediaDescription>
+                <multimedia url="http://owdo.thisisglobal.com/2.0/id/25/logo/600x600.jpg" mimeValue="image/png" width="600" height="600"/>
+            </mediaDescription>
+            <mediaDescription>
+                <multimedia url="http://owdo.thisisglobal.com/2.0/id/25/logo/1024x768.jpg" mimeValue="image/png" width="1024" height="768"/>
+            </mediaDescription>
+            <genre href="urn:tva:metadata:cs:ContentCS:2004:3.6.10"/>
+            <genre href="urn:tva:metadata:cs:ContentCS:2004:3.6.8"/>
+            <genre href="urn:tva:metadata:cs:ContentCS:2004:3.1.1.11"/>
+            <genre href="urn:tva:metadata:cs:ContentCS:2004:3.6.8.14"/>
+            <genre href="urn:tva:metadata:cs:ContentCS:2004:3.1.4.12"/>
+            <keywords>London, music, pop, rock, dance, urban,</keywords>
+            <link uri="sms:83958" description="Text the Studio"/>
+            <link uri="http://www.capitalfm.com/london" mimeValue="text/html"/>
+            <radiodns fqdn="www.capitalfm.com" serviceIdentifier="london"/>
+        </service>
+    </services>
+</serviceInformation>
