@@ -6,7 +6,7 @@
 
 using namespace mot;
 
-namespace spi 
+namespace hybridspi 
 {
 
     struct content_id
@@ -47,7 +47,7 @@ namespace spi
 
         ScopeStart(DateTime timepoint);
 
-        vector<unsigned char> encodeData() const;
+        vector<unsigned char> EncodeData() const;
 
     protected:
 
@@ -65,7 +65,7 @@ namespace spi
 
         ScopeEnd(DateTime timepoint);
 
-        vector<unsigned char> encodeData() const;
+        vector<unsigned char> EncodeData() const;
 
     protected:
 
@@ -83,7 +83,9 @@ namespace spi
 
         ScopeId(content_id scope);
 
-        vector<unsigned char> encodeData() const;
+        ScopeId(unsigned int ecc, unsigned int eid);
+
+        vector<unsigned char> EncodeData() const;
 
     protected:
 

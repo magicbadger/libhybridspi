@@ -18,7 +18,11 @@ namespace hybridspi
         
         public:
         
-            Service(string lookup);
+            Service(string fqdn, string serviceIdentifier);
+            
+            string FQDN() { return fqdn; };
+            
+            string ServiceIdentifier() { return serviceIdentifier; };
             
             void AddBearer(Bearer *bearer);
             
@@ -33,7 +37,9 @@ namespace hybridspi
             
         private:
         
-            string lookup;
+            string fqdn;
+            
+            string serviceIdentifier;
             
             vector<Bearer*> bearers;
         

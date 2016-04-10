@@ -4,6 +4,7 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <regex>
 
 using namespace std;
 using namespace std::chrono;
@@ -206,7 +207,11 @@ namespace hybridspi
         
             Bearer(int cost, int offset);
             
+            void SetCost(int cost) { this->cost = cost; };
+            
             int Cost() { return cost; }
+            
+            void SetOffset(int offset) { this->offset = offset; };
             
             int Offset() { return offset; }
             
@@ -233,12 +238,11 @@ namespace hybridspi
         
             DigitalBearer(string content, int cost, int offset);
             
-            void SetBitrate(int bitrate)
-            {
-                this->bitrate = bitrate;
-            }
+            void SetBitrate(int bitrate) { this->bitrate = bitrate; };
             
             int Bitrate() { return bitrate; };
+            
+            void SetContent(string content) { this->content = content; };
             
             string Content() { return content; };
             
@@ -261,6 +265,9 @@ namespace hybridspi
         
             DabBearer(int ecc, int eid, int sid, int scids, string content, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
             
+            // parse from the bearer URI
+            DabBearer(string uri, string content, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
+            
             unsigned int ECC() { return ecc; };
             
             unsigned int EId() { return eid; };
@@ -282,6 +289,8 @@ namespace hybridspi
             unsigned int sid;
             
             unsigned int scids;
+            
+            const regex BEARER_REGEX = regex("^dab:(.{3})\\.(.{4})\\.(.{4})\\.(.{1})[\\.(.+?)]{0,1}$");
     };
     
     class FmBearer : public Bearer
@@ -289,6 +298,9 @@ namespace hybridspi
         public:
         
             FmBearer(int ecc, int pi, int frequency, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
+            
+            // parse from the bearer URI
+            FmBearer(string uri, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
             
             int ECC() { return ecc; };
             
@@ -307,13 +319,15 @@ namespace hybridspi
             int pi;
             
             int frequency;
+            
+            const regex BEARER_REGEX = regex("fm:(.{3})\\.(.{4})\\.(.{5})");
     };
     
     class IpBearer : public DigitalBearer
     {
         public:
         
-            IpBearer(string uri, string content, int cost, int offset);
+            IpBearer(string uri, string content, int cost = DEFAULT_COST, int offset = DEFAULT_OFFSET);
             
             string URI() const { return uri; };
             
@@ -331,7 +345,7 @@ namespace hybridspi
         
             Link(string uri, string content = "", string description = "");
             
-            string URI() { return uri; };
+            string URI() const { return uri; };
             
             Link* SetContent(string content)
             {
@@ -339,7 +353,7 @@ namespace hybridspi
                 return this;
             }
             
-            string Content() { return content; };
+            string Content() const { return content; };
             
             Link* SetDescription(string description)
             {
@@ -347,11 +361,13 @@ namespace hybridspi
                 return this;
             }
             
-            string Description() { return description; };
+            string Description() const { return description; };
             
             bool operator== (const Link &that) const;
             
-            bool operator!= (const Link &that) const;                       
+            bool operator!= (const Link &that) const; 
+            
+            friend ostream& operator<< (ostream& stream, const Link& link);
             
         private:
         
@@ -414,17 +430,27 @@ namespace hybridspi
         
             Multimedia(string location, string content, int width, int height);
             
-            string Location() { return location; };
+            void SetLocation(string location) { this->location = location; };
             
-            string Content() { return content; };
+            string Location() const { return location; };
             
-            int Height() { return height; };
+            void SetContent(string content) { this->content = content; };
             
-            int Width() { return width; };
+            string Content() const { return content; };
+            
+            void SetHeight(int height) { this->height = height; };
+            
+            int Height() const { return height; };
+            
+            void SetWidth(int width) { this->width = width; };
+            
+            int Width() const { return width; };
             
             bool operator== (const Multimedia &that) const;
             
-            bool operator!= (const Multimedia &that) const;                  
+            bool operator!= (const Multimedia &that) const;   
+            
+            friend ostream& operator<< (ostream& stream, const Multimedia& genre);                                       
             
         private:
             
@@ -446,13 +472,15 @@ namespace hybridspi
             
             Genre(string href, string name);
             
-            string Href() { return href; };
+            string Href() const { return href; };
             
-            string Name() { return name; };
+            string Name() const { return name; };
             
             bool operator== (const Genre &that) const;
             
-            bool operator!= (const Genre &that) const;                
+            bool operator!= (const Genre &that) const;    
+            
+            friend ostream& operator<< (ostream& stream, const Genre& genre);            
             
         private:
         

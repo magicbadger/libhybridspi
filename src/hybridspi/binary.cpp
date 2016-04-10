@@ -1,8 +1,5 @@
 #include <hybridspi/binary.h>
 
-// #include <iostream>
-// #include <hybridspi/util.h>
-
 using namespace std;
 using namespace std::chrono;
 
@@ -37,8 +34,12 @@ namespace hybridspi
             : ensemble(ensemble)
         { }
         
+        /**
+         * Marshalling
+         */
+        
         vector<unsigned char> BinaryMarshaller::Marshall(ServiceInfo info) const
-        {
+        {            
             // serviceInformation
             Element serviceInformationElement(0x03);
             serviceInformationElement.AddAttribute(Attribute(0x81, encode_timepoint(info.Created())));
@@ -48,18 +49,32 @@ namespace hybridspi
                 Attribute versionAttribute(0x80, encode_number<16>(info.Version()));
                 serviceInformationElement.AddAttribute(versionAttribute);
             }
+
             if(!info.Originator().empty())
             {
                 Attribute originatorAttribute(0x80, encode_number<16>(info.Version()));
                 serviceInformationElement.AddAttribute(Attribute(0x82, info.Originator()));
             }
-            
+
             // ensemble
             Element ensembleElement = build_ensemble(ensemble, info);
+
             serviceInformationElement.AddElement(ensembleElement);
-            
+
             return serviceInformationElement.encode();
         }
+        
+        vector<unsigned char> BinaryMarshaller::Marshall(ProgrammeInfo programme_info) const
+        {
+            vector<unsigned char> bytes;
+            return bytes;
+        }
+            
+        vector<unsigned char> BinaryMarshaller::Marshall(GroupInfo group_info) const
+        {
+            vector<unsigned char> bytes;
+            return bytes;
+        }          
         
         vector<unsigned char> encode_string(string val)
         {
@@ -549,7 +564,25 @@ namespace hybridspi
             // TODO keywords
 
             return serviceElement;
-        }        
+        }  
+        
+        ServiceInfo BinaryMarshaller::UnmarshallServiceInfo(vector<unsigned char> bytes) const
+        {
+            ServiceInfo info;
+            return info;            
+        }
+            
+        ProgrammeInfo BinaryMarshaller::UnmarshallProgrammeInfo(vector<unsigned char> bytes) const
+        {
+            ProgrammeInfo info;
+            return info;            
+        }
+            
+        GroupInfo BinaryMarshaller::UnmarshallGroupInfo(vector<unsigned char> bytes) const
+        {
+            GroupInfo info;
+            return info;            
+        }             
                 
 
     }

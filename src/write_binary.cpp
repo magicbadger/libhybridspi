@@ -19,7 +19,7 @@ int main()
     ServiceInfo info(tp);
     
     // sample service
-    Service service("http://www.heart.co.uk/bristol");
+    Service service("www.heart.co.uk", "bristol");
 
     // names
     service.AddName(ShortName("Heart"));

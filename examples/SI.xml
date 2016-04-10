@@ -1,10 +1,10 @@
 <serviceInformation xmlns="http://www.worlddab.org/schemas/spi/31" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xml="http://www.w3.org/XML/1998/namespace" xsi:schemaLocation="http://www.worlddab.org/schemas/spi/31 spi_31.xsd" creationTime="2014-04-25T00:05:31" originator="Global">
     <services>
         <service>
-            <bearer uri="dab:ce1.c185.c479.0" cost="20" offset="2000" mimeValue="audio/mpeg"/>
-            <bearer uri="fm:ce1.c479.09580" cost="30"/>
-            <bearer uri="http://media-ice.musicradio.com/Capital" cost="40" offset="4000" mimeValue="audio/aacp" bitrate="48"/>
-            <bearer uri="http://media-ice.musicradio.com/Capital" cost="40" offset="4000" mimeValue="audio/mpeg" bitrate="48"/>
+            <bearer id="dab:ce1.c185.c479.0" cost="20" offset="2000" mimeValue="audio/mpeg"/>
+            <bearer id="fm:ce1.c479.09580" cost="30"/>
+            <bearer id="http://media-ice.musicradio.com/Capital" cost="40" offset="4000" mimeValue="audio/aacp" bitrate="48"/>
+            <bearer id="http://media-ice.musicradio.com/CapitalMP3Low" cost="40" offset="4000" mimeValue="audio/mpeg" bitrate="48"/>
             <shortName>Capital</shortName>
             <mediumName>Capital FM</mediumName>
             <longName>Capital London</longName>

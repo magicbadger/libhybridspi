@@ -32,17 +32,15 @@ src_libhybridspi_la_LIBADD = -L${LIBMOT_LIBS} ${TINYXML2_LIBS}
 #
 bin_PROGRAMS = \
     src/write_binary \
-    src/write_xml
+    src/decode_si_xml 
 
-src_write_binary_SOURCES = \
-    src/write_binary.cpp
+src_write_binary_SOURCES = src/write_binary.cpp
 src_write_binary_CPPFLAGS = -Iinclude
 src_write_binary_LDADD = -Lsrc/.libs -lhybridspi
 
-src_write_xml_SOURCES = \
-    src/write_xml.cpp
-src_write_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
-src_write_xml_LDADD = -Lsrc/.libs -lhybridspi -ltinyxml2
+src_decode_si_xml_SOURCES = src/decode_si_xml.cpp
+src_decode_si_xml_CPPFLAGS = -g -Iinclude ${TINYXML2_CFLAGS}
+src_decode_si_xml_LDADD = -Lsrc/.libs -lhybridspi ${TINYXML2_LIBS}
 
 #
 # Tests
@@ -52,9 +50,10 @@ test_apps = \
     tests/test_encode_cdata \
     tests/test_build_name \
     tests/test_build_bearer \
-    tests/test_serviceinfo \
-    tests/serviceinfo_minimal_xml \
-    tests/serviceinfo_minimal_binary
+    tests/test_header_parameters \
+    tests/marshall_serviceinfo_minimal_xml \
+    tests/marshall_serviceinfo_minimal_binary \
+    tests/unmarshall_serviceinfo_spec_xml
 
 tests_test_encode_timepoint_SOURCES = tests/test_encode_timepoint.cpp 
 tests_test_encode_timepoint_CPPFLAGS = -Iinclude
@@ -72,17 +71,21 @@ tests_test_build_bearer_SOURCES = tests/test_build_bearer.cpp
 tests_test_build_bearer_CPPFLAGS = -Iinclude
 tests_test_build_bearer_LDADD = -Lsrc/.libs -lhybridspi
 
-tests_test_serviceinfo_SOURCES = tests/test_serviceinfo.cpp 
-tests_test_serviceinfo_CPPFLAGS = -Iinclude
-tests_test_serviceinfo_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_header_parameters_SOURCES = tests/test_header_parameters.cpp 
+tests_test_header_parameters_CPPFLAGS = -Wp,-v -Iinclude -I${LIBMOT_CFLAGS}
+tests_test_header_parameters_LDADD = -Lsrc/.libs -lhybridspi -L${LIBMOT_LIBS} -lmot
 
-tests_serviceinfo_minimal_xml_SOURCES = tests/serviceinfo_minimal_xml.cpp
-tests_serviceinfo_minimal_xml_CPPFLAGS = -Iinclude
-tests_serviceinfo_minimal_xml_LDADD = -Lsrc/.libs -lhybridspi
+tests_marshall_serviceinfo_minimal_xml_SOURCES = tests/marshall_serviceinfo_minimal_xml.cpp
+tests_marshall_serviceinfo_minimal_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
+tests_marshall_serviceinfo_minimal_xml_LDADD = -Lsrc/.libs -lhybridspi
 
-tests_serviceinfo_minimal_binary_SOURCES = tests/serviceinfo_minimal_binary.cpp
-tests_serviceinfo_minimal_binary_CPPFLAGS = -Iinclude
-tests_serviceinfo_minimal_binary_LDADD = -Lsrc/.libs -lhybridspi
+tests_marshall_serviceinfo_minimal_binary_SOURCES = tests/marshall_serviceinfo_minimal_binary.cpp
+tests_marshall_serviceinfo_minimal_binary_CPPFLAGS = -Iinclude
+tests_marshall_serviceinfo_minimal_binary_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_unmarshall_serviceinfo_spec_xml_SOURCES = tests/unmarshall_serviceinfo_spec_xml.cpp
+tests_unmarshall_serviceinfo_spec_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
+tests_unmarshall_serviceinfo_spec_xml_LDADD = -Lsrc/.libs -lhybridspi
 
 check_PROGRAMS = ${test_apps}
 

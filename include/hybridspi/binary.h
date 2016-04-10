@@ -44,6 +44,16 @@ namespace hybridspi
             
                 vector<unsigned char> Marshall(ServiceInfo service_info) const;
                 
+                vector<unsigned char> Marshall(ProgrammeInfo programme_info) const;
+            
+                vector<unsigned char> Marshall(GroupInfo group_info) const;
+            
+                ServiceInfo UnmarshallServiceInfo(vector<unsigned char> bytes) const;
+            
+                ProgrammeInfo UnmarshallProgrammeInfo(vector<unsigned char> bytes) const;
+            
+                GroupInfo UnmarshallGroupInfo(vector<unsigned char> bytes) const;                
+                
             private:
             
                 Ensemble ensemble;

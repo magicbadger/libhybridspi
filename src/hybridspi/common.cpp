@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <string>
+#include <iostream>
 
 namespace hybridspi
 {
@@ -53,7 +54,13 @@ namespace hybridspi
     bool Link::operator!= (const Link &that) const
     {
         return !(*this == that);
-    }    
+    }   
+    
+    ostream& operator<< (ostream& stream, const Link& link) 
+    {
+        stream << link.URI();
+        return stream;
+    }
     
     Named::Named()
     { }
@@ -252,7 +259,13 @@ namespace hybridspi
     bool Multimedia::operator!= (const Multimedia &that) const
     {
         return !(*this == that);
-    }      
+    }  
+    
+    ostream& operator<< (ostream& stream, const Multimedia& media) 
+    {
+        stream << media.Location();
+        return stream;
+    }        
       
     Genre::Genre(string href)
         : href(href)
@@ -271,6 +284,12 @@ namespace hybridspi
     {
         return !(*this == that);
     }
+    
+    ostream& operator<< (ostream& stream, const Genre& genre) 
+    {
+        stream << genre.Href();
+        return stream;
+    }    
     
     Bearer::Bearer(int cost, int offset)
         : GeoLocated(), cost(cost), offset(offset)
@@ -294,6 +313,23 @@ namespace hybridspi
         : DigitalBearer(content, cost, offset), ecc(ecc), eid(eid), sid(sid), scids(scids)
     { }
     
+    DabBearer::DabBearer(string uri, string content, int cost, int offset)
+        : DigitalBearer(content, cost, offset)
+    {
+        smatch match;
+        regex_search(uri, match, BEARER_REGEX);
+        if(match.size() <= 4)
+        {
+            // throw some kind of error? have to check whether throwing an error in an
+            // constructor is kosher
+        }
+        
+        ecc = stoul(match.str(1).substr(1), nullptr, 16);
+        eid = stoul(match.str(2), nullptr, 16);
+        sid = stoul(match.str(3), nullptr, 16);
+        scids = stoul(match.str(4), nullptr, 16);        
+    }
+    
     string DabBearer::URI() const
     {   
         char* x = new char[17];
@@ -315,6 +351,22 @@ namespace hybridspi
     FmBearer::FmBearer(int ecc, int pi, int frequency, int cost, int offset)
         : Bearer(cost, offset), ecc(ecc), pi(pi), frequency(frequency)
     { }
+    
+    FmBearer::FmBearer(string uri, int cost, int offset)
+        : Bearer(cost, offset)
+    {
+        smatch match;
+        regex_search(uri, match, BEARER_REGEX);
+        if(match.size() <= 3)
+        {
+            // throw some kind of error? have to check whether throwing an error in an
+            // constructor is kosher
+        }
+        
+        ecc = stoul(match.str(1).substr(1), nullptr, 16);
+        pi = stoul(match.str(2), nullptr, 16);
+        frequency = stoul(match.str(3), nullptr)*10;
+    }
     
     string FmBearer::URI() const
     {

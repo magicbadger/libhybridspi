@@ -31,7 +31,8 @@ int main()
     }
     
     {
-        DabBearer bearer(0xe1, 0xcfff, 0xcff1, 0, 128000, "audio/mpeg");
+        DabBearer bearer(0xe1, 0xcfff, 0xcff1, 0, "audio/mpeg");
+        bearer.SetBitrate(128000);
         ASSERT("encoded DAB bearer", bytes_to_hex(build_bearer(&bearer).encode()), "29 08 80 06 40 E1 CF FF CF F1");        
     }
 

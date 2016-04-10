@@ -20,9 +20,20 @@ namespace hybridspi
                 XmlMarshaller();
             
                 vector<unsigned char> Marshall(ServiceInfo service_info) const;
+                                
+                vector<unsigned char> Marshall(ProgrammeInfo programme_info) const;
+            
+                vector<unsigned char> Marshall(GroupInfo group_info) const;
+            
+                ServiceInfo UnmarshallServiceInfo(vector<unsigned char> bytes) const;
+            
+                ProgrammeInfo UnmarshallProgrammeInfo(vector<unsigned char> bytes) const;
+            
+                GroupInfo UnmarshallGroupInfo(vector<unsigned char> bytes) const;                
                 
             private:
             
+                // marshalling
                 XMLElement* build_service(XMLDocument *doc, Service &service) const;
                 
                 XMLElement* build_name(XMLDocument* doc, Name &name) const;
@@ -36,6 +47,14 @@ namespace hybridspi
                 XMLElement* build_keywords(XMLDocument* doc, vector<string> &keywords) const;
 
                 XMLElement* build_link(XMLDocument* doc, Link &link) const;
+                
+                // unmarshalling
+                Service parse_service(XMLElement* serviceElement) const;
+                
+                Name parse_name(XMLElement* element) const;   
+                
+                Description parse_description(XMLElement* element) const;
+                                             
         };        
     }
 }

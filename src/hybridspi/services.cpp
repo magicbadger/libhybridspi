@@ -31,8 +31,9 @@ namespace hybridspi
         return os;
     }
     
-    Service::Service(string lookup)
-        : lookup(lookup), Named(), Described(), GeoLocated(), Linked(), Genred(), MediaEnabled(), Keyworded() 
+    Service::Service(string fqdn, string serviceIdentifier)
+        : fqdn(fqdn), serviceIdentifier(serviceIdentifier), Named(), Described(), GeoLocated(), 
+          Linked(), Genred(), MediaEnabled(), Keyworded() 
     { }
     
     void Service::AddBearer(Bearer* bearer)
@@ -49,7 +50,7 @@ namespace hybridspi
     
     bool Service::operator== (const Service &that) const
     {
-        return lookup == that.lookup;
+        return fqdn == that.fqdn && serviceIdentifier == that.serviceIdentifier;
     }
             
     bool Service::operator!= (const Service &that) const
