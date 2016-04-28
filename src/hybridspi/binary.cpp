@@ -1,7 +1,5 @@
 #include <hybridspi/binary.h>
 
-poop
-
 using namespace std;
 using namespace std::chrono;
 
@@ -9,24 +7,6 @@ namespace hybridspi
 {
     namespace binary
     {
-        
-        template<size_t size>
-        inline std::vector<unsigned char> bits_to_bytes(std::bitset<size> bits)
-        {
-            std::vector<unsigned char> bytes(size/8);
-            for(int j=0; j<int(size); j++) {
-                bytes[j/8] = bytes[j/8] + ((bits[size-j-1] ? 1:0) << (7-j%8));
-            }
-
-            return bytes;
-        }
-        
-        inline std::vector<unsigned char> operator+(const std::vector<unsigned char> &a, const std::vector<unsigned char> &b)
-        {
-            std::vector<unsigned char> result(b);
-            result.insert(result.begin(), a.begin(), a.end());
-            return result;
-        }
         
         Ensemble::Ensemble(int ecc, int eid)
             : ecc(ecc), eid(eid), Named(), Described(), MediaEnabled()
@@ -85,13 +65,6 @@ namespace hybridspi
             return bytes;
         }
         
-        template<size_t size>
-        vector<unsigned char> encode_number(int val)
-        {
-            bitset<size> data(val);
-            return bits_to_bytes(data);
-        }
-            
         unsigned int timepoint_to_mjd(DateTime timepoint)
         {            
             time_t tt = system_clock::to_time_t(timepoint);
@@ -243,11 +216,6 @@ namespace hybridspi
             
             return bytes;            
         }
-        
-        template<size_t size>
-        Attribute::Attribute(int tag, int value)
-            : tag(tag), value(encode_number<size>(value))
-        { }
                 
         Attribute::Attribute(int tag, string value)
             : tag(tag), value(encode_string(value))

@@ -1,10 +1,13 @@
 #ifndef HYBRIDSPI_BINARY_H
 #define HYBRIDSPI_BINARY_H
 
+#include <string.h>
+
 #include <hybridspi/common.h>
 #include <hybridspi/services.h>
 #include <hybridspi/marshall.h>
 
+using namespace std;
 using namespace hybridspi;
 
 namespace hybridspi
@@ -62,10 +65,7 @@ namespace hybridspi
         class Attribute
         {
             public:
-                
-                template<size_t size>
-                Attribute(int tag, int value);
-                
+                                
                 Attribute(int tag, string value);
                 
                 Attribute(int tag, vector<unsigned char> value);
@@ -146,7 +146,11 @@ namespace hybridspi
         vector<unsigned char> encode_string(string val);
         
         template<size_t size>
-        vector<unsigned char> encode_number(int number);
+        vector<unsigned char> encode_number(int val)
+        {
+            bitset<size> data(val);
+            return bits_to_bytes(data);
+        }
         
         unsigned int timepoint_to_mjd(DateTime timepoint);        
         

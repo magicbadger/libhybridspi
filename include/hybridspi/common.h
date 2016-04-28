@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <bitset>
 
 using namespace std;
 using namespace std::chrono;
@@ -19,6 +20,19 @@ const unsigned int DEFAULT_OFFSET = 0;
 
 namespace hybridspi
 {
+
+    template<size_t size>
+    vector<unsigned char> bits_to_bytes(bitset<size> bits)
+    {
+        vector<unsigned char> bytes(size/8);
+        for(int j=0; j<int(size); j++) {
+            bytes[j/8] = bytes[j/8] + ((bits[size-j-1] ? 1:0) << (7-j%8));
+        }
+
+        return bytes;
+    }
+
+    vector<unsigned char> operator+(const vector<unsigned char> &a, const vector<unsigned char> &b);
     
     class BaseText
     {

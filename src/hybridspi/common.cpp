@@ -6,6 +6,13 @@
 
 namespace hybridspi
 {
+
+    vector<unsigned char> operator+(const vector<unsigned char> &a, const vector<unsigned char> &b)
+    {
+        vector<unsigned char> result(b);
+        result.insert(result.begin(), a.begin(), a.end());
+        return result;
+    }
     
     BaseText::BaseText(string text, int max_length)
         : text(text), max_length(max_length)

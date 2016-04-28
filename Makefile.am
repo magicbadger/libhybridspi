@@ -46,8 +46,11 @@ src_decode_si_xml_LDADD = -Lsrc/.libs -lhybridspi ${TINYXML2_LIBS}
 # Tests
 #
 test_apps = \
+    tests/test_encode_number \
+    tests/test_encode_string \
     tests/test_encode_timepoint \
     tests/test_encode_cdata \
+    tests/test_encode_attribute \
     tests/test_build_name \
     tests/test_build_bearer \
     tests/test_header_parameters \
@@ -55,13 +58,25 @@ test_apps = \
     tests/marshall_serviceinfo_minimal_binary \
     tests/unmarshall_serviceinfo_spec_xml
 
-tests_test_encode_timepoint_SOURCES = tests/test_encode_timepoint.cpp 
-tests_test_encode_timepoint_CPPFLAGS = -Iinclude
-tests_test_encode_timepoint_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_attribute_SOURCES = tests/test_encode_attribute.cpp 
+tests_test_encode_attribute_CPPFLAGS = -Iinclude
+tests_test_encode_attribute_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_test_encode_cdata_SOURCES = tests/test_encode_cdata.cpp 
 tests_test_encode_cdata_CPPFLAGS = -Iinclude
 tests_test_encode_cdata_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_test_encode_string_SOURCES = tests/test_encode_string.cpp 
+tests_test_encode_string_CPPFLAGS = -Iinclude
+tests_test_encode_string_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_test_encode_number_SOURCES = tests/test_encode_number.cpp 
+tests_test_encode_number_CPPFLAGS = -Iinclude
+tests_test_encode_number_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_test_encode_timepoint_SOURCES = tests/test_encode_timepoint.cpp 
+tests_test_encode_timepoint_CPPFLAGS = -Iinclude
+tests_test_encode_timepoint_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_test_build_name_SOURCES = tests/test_build_name.cpp 
 tests_test_build_name_CPPFLAGS = -Iinclude
@@ -72,7 +87,7 @@ tests_test_build_bearer_CPPFLAGS = -Iinclude
 tests_test_build_bearer_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_test_header_parameters_SOURCES = tests/test_header_parameters.cpp 
-tests_test_header_parameters_CPPFLAGS = -Wp,-v -Iinclude -I${LIBMOT_CFLAGS}
+tests_test_header_parameters_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS}
 tests_test_header_parameters_LDADD = -Lsrc/.libs -lhybridspi -L${LIBMOT_LIBS} -lmot
 
 tests_marshall_serviceinfo_minimal_xml_SOURCES = tests/marshall_serviceinfo_minimal_xml.cpp
