@@ -23,7 +23,7 @@ src_libhybridspi_la_SOURCES = \
     src/hybridspi/groups.cpp \
     src/hybridspi/services.cpp 
 
-src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} -Wno-shift-count-overflow
+src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} -Wall -Wno-shift-count-overflow
 src_libhybridspi_la_CXXFLAGS = @LIBHYBRIDSPI_EXTRA_CXXFLAGS@
 src_libhybridspi_la_LIBADD = -L${LIBMOT_LIBS} ${TINYXML2_LIBS}
 
@@ -56,6 +56,8 @@ test_apps = \
     tests/test_header_parameters \
     tests/marshall_serviceinfo_minimal_xml \
     tests/marshall_serviceinfo_minimal_binary \
+    tests/marshall_programmeinfo_minimal_xml \
+    tests/marshall_programmeinfo_spec_xml \
     tests/unmarshall_serviceinfo_spec_xml
 
 tests_test_encode_attribute_SOURCES = tests/test_encode_attribute.cpp 
@@ -97,6 +99,14 @@ tests_marshall_serviceinfo_minimal_xml_LDADD = -Lsrc/.libs -lhybridspi
 tests_marshall_serviceinfo_minimal_binary_SOURCES = tests/marshall_serviceinfo_minimal_binary.cpp
 tests_marshall_serviceinfo_minimal_binary_CPPFLAGS = -Iinclude
 tests_marshall_serviceinfo_minimal_binary_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_marshall_programmeinfo_minimal_xml_SOURCES = tests/marshall_programmeinfo_minimal_xml.cpp
+tests_marshall_programmeinfo_minimal_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
+tests_marshall_programmeinfo_minimal_xml_LDADD = -Lsrc/.libs -lhybridspi
+
+tests_marshall_programmeinfo_spec_xml_SOURCES = tests/marshall_programmeinfo_spec_xml.cpp
+tests_marshall_programmeinfo_spec_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
+tests_marshall_programmeinfo_spec_xml_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_unmarshall_serviceinfo_spec_xml_SOURCES = tests/unmarshall_serviceinfo_spec_xml.cpp
 tests_unmarshall_serviceinfo_spec_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}

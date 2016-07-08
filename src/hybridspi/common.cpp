@@ -13,13 +13,38 @@ namespace hybridspi
         result.insert(result.begin(), a.begin(), a.end());
         return result;
     }
+
+    DateTime make_datetime(string text, string format)
+    {
+        tm t = {};
+        stringstream ss;
+        ss << text;
+        ss >> get_time(&t, format.c_str());
+        auto epoch = mktime(&t);
+        return Clock::from_time_t(epoch);
+    }
+
+    DateTime make_datetime(int year, int month, int day, int hour,
+                           int min, int sec, int usec, int isDST)
+    {
+        tm t;
+        t.tm_year = year-1900;
+        t.tm_mon = month-1;
+        t.tm_mday = day;
+        t.tm_hour = hour;
+        t.tm_min = min;
+        t.tm_sec = sec;
+        t.tm_isdst = isDST;
+        auto epoch = mktime(&t);
+        return Clock::from_time_t(epoch) + microseconds{usec};
+    }    
     
     BaseText::BaseText(string text, int max_length)
         : text(text), max_length(max_length)
     {
         if(text.length() > max_length)
         {
-            throw std::length_error("text");
+            throw std::length_error("text is longer than the max_length: " + text);
         }        
     }
     
@@ -83,7 +108,7 @@ namespace hybridspi
         return result;
     }
     
-    void Named::AddName(Name name)
+    void Named::AddName(const Name &name)
     {
         names.push_back(name);
     }
@@ -100,7 +125,7 @@ namespace hybridspi
     { } 
     
     ShortDescription::ShortDescription(string text)
-        : Description(text, 128)
+        : Description(text, 180)
     { }
     
     LongDescription::LongDescription(string text)
@@ -121,7 +146,7 @@ namespace hybridspi
         return result;
     }
     
-    void Described::AddDescription(Description description)
+    void Described::AddDescription(const Description &description)
     {
         descriptions.push_back(description);
     }
@@ -136,7 +161,7 @@ namespace hybridspi
     Linked::Linked()
     { }
     
-    void Linked::AddLink(Link link)
+    void Linked::AddLink(const Link &link)
     {
         links.push_back(link);
     }
@@ -148,12 +173,12 @@ namespace hybridspi
             links.erase(it);
     }  
     
-    void Keyworded::AddKeyword(string keyword)
+    void Keyworded::AddKeyword(const string & keyword)
     {
         keywords.push_back(keyword);
     }
     
-    void Keyworded::AddKeywords(string keywords)
+    void Keyworded::AddKeywords(const string &keywords)
     {
         auto t = strtok(const_cast<char*>(keywords.c_str()), ",");
         while(t != NULL)
@@ -173,7 +198,7 @@ namespace hybridspi
     MediaEnabled::MediaEnabled()
     { }
     
-    void MediaEnabled::AddMedia(Multimedia multimedia)
+    void MediaEnabled::AddMedia(const Multimedia &multimedia)
     {
         media.push_back(multimedia);
     }
@@ -188,7 +213,7 @@ namespace hybridspi
     Genred::Genred()
     { }
 
-    void Genred::AddGenre(Genre genre)
+    void Genred::AddGenre(const Genre &genre)
     {
         genres.push_back(genre);
     }
@@ -243,9 +268,21 @@ namespace hybridspi
         (this->points == that->points);
     }
     
-    Membership::Membership(short shortcrid, string crid, short index = 1)
-        : shortcrid(shortcrid), crid(crid), index(index)
+    Membership::Membership(string id, unsigned short shortId, unsigned short index)
+        : id(id), shortId(shortId), index(index)
     { }
+            
+    bool Membership::operator== (const Membership &that) const
+    {
+        return (id == that.id &&
+                shortId == that.shortId &&
+                index == that.index);
+    }
+            
+    bool Membership::operator!= (const Membership &that) const
+    {
+        return !(*this == that);        
+    }     
     
     Multimedia::Multimedia(string location, string content)
         : location(location), content(content)
@@ -402,5 +439,6 @@ namespace hybridspi
         return that != nullptr && 
             (this->uri == that->uri);
     }    
+   
     
 }

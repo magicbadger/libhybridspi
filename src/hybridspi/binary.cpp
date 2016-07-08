@@ -347,7 +347,7 @@ namespace hybridspi
         Element build_description(Description description)
         {
             int tag;
-            if(description.MaxLength() <= 128) { tag = 0x1a; }
+            if(description.MaxLength() <= 180) { tag = 0x1a; }
             else { tag = 0x1b; }
             
             Element mediagroupElement(0x13);

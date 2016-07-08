@@ -32,8 +32,8 @@ namespace hybridspi
     }
     
     Service::Service(string fqdn, string serviceIdentifier)
-        : fqdn(fqdn), serviceIdentifier(serviceIdentifier), Named(), Described(), GeoLocated(), 
-          Linked(), Genred(), MediaEnabled(), Keyworded() 
+        : Named(), Described(), GeoLocated(), Linked(), Genred(), MediaEnabled(), Keyworded(),
+          fqdn(fqdn), serviceIdentifier(serviceIdentifier)
     { }
     
     void Service::AddBearer(Bearer* bearer)

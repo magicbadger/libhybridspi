@@ -8,11 +8,87 @@ using namespace hybridspi;
 
 namespace hybridspi
 {
+        
+    class AbsoluteTime
+    {
+        public:
+        
+            AbsoluteTime(DateTime billedTime, Duration billedDuration);
+            
+            AbsoluteTime(DateTime billedTime, Duration billedDuration, DateTime actualTime, Duration actualDuration);
+            
+            DateTime BilledTime() { return billedTime; };
+            
+            Duration BilledDuration() { return billedDuration; };
+            
+            DateTime ActualTime() { return actualTime; };
+            
+            Duration ActualDuration() { return actualDuration; };
+            
+            bool operator== (const AbsoluteTime &that) const;
+            
+            bool operator!= (const AbsoluteTime &that) const;               
+
+        private:
+
+            DateTime billedTime, actualTime;
+            Duration billedDuration, actualDuration;
+            
+    };
+
+    class RelativeTime
+    {
+        public:
+        
+            RelativeTime(Duration billedTime, Duration billedDuration);
+            
+            RelativeTime(Duration billedTime, Duration billedDuration, Duration actualTime, Duration actualDuration);
+            
+            Duration BilledTime() { return billedTime; };
+            
+            Duration BilledDuration() { return billedDuration; };
+            
+            Duration ActualTime() { return actualTime; };
+            
+            Duration ActualDuration() { return actualDuration; };
+            
+            bool operator== (const RelativeTime &that) const;
+            
+            bool operator!= (const RelativeTime &that) const;               
+
+        private:
+
+            Duration billedTime, billedDuration, actualTime, actualDuration;
+        
+    };
 
     class Location
     {
         public:
+        
+            Location();
+            
+            vector<Bearer*> Bearers() const { return bearers; };
 
+            void AddBearer(Bearer* bearer);
+
+            void RemoveBearer(const Bearer* bearer);
+            
+            vector<RelativeTime> RelativeTimes() const { return relativeTimes; };
+
+            void AddRelativeTime(const RelativeTime &relativeTime);
+
+            void RemoveRelativeTime(const RelativeTime &relativeTime);        
+            
+            vector<AbsoluteTime> AbsoluteTimes() const { return absoluteTimes; };
+
+            void AddAbsoluteTime(const AbsoluteTime &absoluteTime);
+
+            void RemoveAbsoluteTime(const AbsoluteTime &absoluteTime);      
+            
+            bool operator== (const Location &that) const;
+            
+            bool operator!= (const Location &that) const;                            
            
         private:
 
@@ -20,9 +96,9 @@ namespace hybridspi
 
             vector<RelativeTime> relativeTimes;
 
-            vector<Time> absoluteTimes;
+            vector<AbsoluteTime> absoluteTimes;
 
-    }
+    };
 
     class Located
     {
@@ -32,7 +108,7 @@ namespace hybridspi
 
             vector<Location> Locations() const { return locations; };
 
-            void AddLocation(Location location);
+            void AddLocation(const Location &location);
 
             void RemoveLocation(const Location &location);
 
@@ -49,39 +125,77 @@ namespace hybridspi
 
             vector<Membership> Memberships() const { return memberships; };
 
-            void AddMembership(Membership membership);
+            void AddMembership(const Membership &membership);
 
             void RemoveMembership(const Membership &membership);
-    }
+
+        private:
+            
+            vector<Membership> memberships;
+    };
 
     class ProgrammeEvent : public Named, public Described, public Linked, public Genred, public MediaEnabled, 
                            public Keyworded, public Located, public Membershipped
     {
         public:
 
-            ProgrammeEvent(string id, int shortId, version = 1, recommendation = false);
+            ProgrammeEvent(string id, int shortId, int version = 1, bool recommendation = false);
+
+            string Id() { return id; };
+            
+            unsigned int ShortId() { return shortId; };
+            
+            unsigned short Version() { return version; };            
+            
+            bool operator== (const ProgrammeEvent &that) const;
+            
+            bool operator!= (const ProgrammeEvent &that) const;               
 
         private:
+        
+            string id;
+            
+            unsigned int shortId;
 
             unsigned int version;
         
             bool recommendation;
-    }
+    };
 
     class Programme : public Named, public Described, public Linked, public Genred, public MediaEnabled, 
                       public Keyworded, public Located, public Membershipped
     {
         public:
             
-            Programme(string id, int shortId, version = 1, recommendation = false);
+            Programme(string id, unsigned int shortId, unsigned short version = 1, bool recommendation = false);
+            
+            string Id() { return id; };
+            
+            unsigned int ShortId() { return shortId; };
+            
+            unsigned short Version() { return version; };
+            
+            vector<ProgrammeEvent> Events() { return events; };
+
+            void AddEvent(const ProgrammeEvent &event);
+
+            void RemoveEvent(const ProgrammeEvent &event);
+            
+            bool operator== (const Programme &that) const;
+            
+            bool operator!= (const Programme &that) const;               
 
         private:
+        
+            string id;
+            
+            unsigned int shortId;
 
-            vector<ProgrammeEvent> events;
-
-            unsigned int version;
+            unsigned short version;
         
             bool recommendation;
+
+            vector<ProgrammeEvent> events;
 
     };
 
@@ -89,15 +203,29 @@ namespace hybridspi
     {
         public:
             
-            Schedule(DateTime start, DateTime end, DateTime created = system_clock::now(), unsigned int version = 0);
+            Schedule(DateTime created = system_clock::now(), unsigned int version = 0);
+            
+            DateTime Created() { return created; };
+            
+            unsigned int Version() { return version; };
+            
+            void SetScope(DateTime start, DateTime stop);
+            
+            pair<DateTime, DateTime> Scope();
 
             void SetOriginator(string originator);
+            
+            string Originator() { return originator; };
 
-            void AddProgramme(Programme programme);
+            void AddProgramme(const Programme &programme);
 
             vector<Programme> Programmes() const { return programmes; }
 
             void RemoveProgramme(const Programme &programme);
+            
+            bool operator== (const Schedule &that) const;
+            
+            bool operator!= (const Schedule &that) const;               
 
         private:
 
@@ -120,7 +248,7 @@ namespace hybridspi
             
             ProgrammeInfo();
 
-            void AddSchedule(Schedule schedule);
+            void AddSchedule(const Schedule &schedule);
 
             vector<Schedule> Schedules() const { return schedules; }
 

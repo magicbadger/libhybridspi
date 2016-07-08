@@ -62,8 +62,24 @@ namespace hybridspi
         }
         
         vector<unsigned char> XmlMarshaller::Marshall(ProgrammeInfo programme_info) const
-        {
-            vector<unsigned char> bytes;
+        {            
+            XMLDocument* doc = new XMLDocument();
+            XMLElement* programmeInformationElement = doc->InsertEndChild(doc->NewElement("epg"))->ToElement();
+		    programmeInformationElement->SetAttribute("xmlns", "http://www.worlddab.org/schemas/spi/31");
+            programmeInformationElement->SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            programmeInformationElement->SetAttribute("xmlns:xml", "http://www.w3.org/XML/1998/namespace");
+            programmeInformationElement->SetAttribute("xsi:schemaLocation", "http://www.worlddab.org/schemas/spi/31 spi_31.xsd");
+            
+            for(auto &schedule : programme_info.Schedules())
+            {
+                programmeInformationElement->InsertEndChild(build_schedule(doc, schedule));
+            }         
+             
+            // stream to byte vector
+            XMLPrinter printer;  
+            doc->Accept(&printer);
+            const char *s = printer.CStr();
+            vector<unsigned char> bytes(s, s + strlen(s));
             return bytes;
         }
     
@@ -71,7 +87,280 @@ namespace hybridspi
         {
             vector<unsigned char> bytes;
             return bytes;
-        }       
+        }    
+        
+        string XmlMarshaller::build_datetime(const DateTime &datetime) const
+        {
+            time_t now_c = chrono::system_clock::to_time_t(datetime);
+            stringstream ss;
+            ss << put_time(localtime(&now_c), "%Y-%m-%dT%H:%M:%S");
+            return ss.str();
+        }
+        
+        string XmlMarshaller::build_duration(const Duration &duration) const
+        {
+            stringstream ss;
+            ss << "PT" << duration.count() << "S";
+            return ss.str();
+        }
+        
+        XMLElement* XmlMarshaller::build_schedule(XMLDocument* doc, Schedule &schedule) const
+        {
+            XMLElement* scheduleElement = doc->NewElement("schedule");
+        
+            // TODO print out timezone, rather than relying on local time
+            auto sss = build_datetime(schedule.Created());
+            const char* date_string = sss.c_str(); 
+            scheduleElement->SetAttribute("creationTime", date_string);
+            
+            // originator
+            if(!schedule.Originator().empty())
+            {
+                scheduleElement->SetAttribute("originator", schedule.Originator().c_str());
+            }
+            
+            // version
+            if(schedule.Version() > 0)
+            {
+                scheduleElement->SetAttribute("version", schedule.Version());
+            } 
+            
+            // scope      
+            XMLElement* scopeElement = doc->NewElement("scope");
+            pair<DateTime, DateTime> scope = schedule.Scope();
+            {
+                auto sss = build_datetime(scope.first);
+                const char* date_string = sss.c_str(); 
+                scopeElement->SetAttribute("startTime", date_string);                       
+            }
+            {
+                auto sss = build_datetime(scope.second);
+                const char* date_string = sss.c_str(); 
+                scopeElement->SetAttribute("stopTime", date_string);                  
+            }
+            scheduleElement->InsertEndChild(scopeElement);
+            
+            // programmes
+            for(auto &programme : schedule.Programmes()) 
+            {
+                scheduleElement->InsertEndChild(build_programme(doc, programme));
+            }
+            
+            return scheduleElement;
+        }   
+        
+        XMLElement* XmlMarshaller::build_programme(XMLDocument* doc, Programme &programme) const
+        {        
+            XMLElement* programmeElement = doc->NewElement("programme");  
+            programmeElement->SetAttribute("shortId", programme.ShortId());
+            programmeElement->SetAttribute("id", programme.Id().c_str());              
+                
+            // names
+            for(auto &name : programme.Names())
+            {
+                XMLElement* nameElement = build_name(doc, name);
+                programmeElement->InsertEndChild(nameElement);
+            }            
+            
+            // descriptions
+            for(auto &description : programme.Descriptions())
+            {
+                XMLElement* descriptionElement = build_description(doc, description);
+                programmeElement->InsertEndChild(descriptionElement);
+            }     
+            
+            // locations
+            for(auto &location : programme.Locations())
+            {
+                XMLElement* locationElement = build_location(doc, location);
+                programmeElement->InsertEndChild(locationElement);
+            }
+            
+            // media
+            for(auto &media : programme.Media())
+            {
+                XMLElement* mediaElement = build_media(doc, media);
+                programmeElement->InsertEndChild(mediaElement);
+            }         
+            
+            // genre
+            for(auto &genre : programme.Genres())
+            {
+                XMLElement* genreElement = build_genre(doc, genre);
+                programmeElement->InsertEndChild(genreElement);
+            }
+            
+            // keywords
+            if(programme.Keywords().size() > 0)
+            {
+                vector<string> keywords = programme.Keywords();
+                XMLElement* keywordsElement = build_keywords(doc, keywords);
+                programmeElement->InsertEndChild(keywordsElement);
+            }
+
+            // links
+            for(auto &link : programme.Links())
+            {
+                XMLElement* linkElement = build_link(doc, link);
+                programmeElement->InsertEndChild(linkElement);
+            }                
+                
+            // memberships
+            for(auto &membership : programme.Memberships())
+            {
+                XMLElement* membershipElement = build_membership(doc, membership);
+                programmeElement->InsertEndChild(membershipElement);
+            }  
+
+            // events
+            for(auto &event : programme.Events())
+            {
+                XMLElement* eventElement = build_event(doc, event);
+                programmeElement->InsertEndChild(eventElement);
+            }
+            
+            return programmeElement;    
+        }
+
+        XMLElement* XmlMarshaller::build_event(XMLDocument* doc, ProgrammeEvent &event) const
+        {        
+            XMLElement* programmeEventElement = doc->NewElement("programmeEvent");  
+            programmeEventElement->SetAttribute("shortId", event.ShortId());
+            programmeEventElement->SetAttribute("id", event.Id().c_str());              
+                
+            // names
+            for(auto &name : event.Names())
+            {
+                XMLElement* nameElement = build_name(doc, name);
+                programmeEventElement->InsertEndChild(nameElement);
+            }            
+            
+            // descriptions
+            for(auto &description : event.Descriptions())
+            {
+                XMLElement* descriptionElement = build_description(doc, description);
+                programmeEventElement->InsertEndChild(descriptionElement);
+            }     
+            
+            // locations
+            for(auto &location : event.Locations())
+            {
+                XMLElement* locationElement = build_location(doc, location);
+                programmeEventElement->InsertEndChild(locationElement);
+            }
+            
+            // media
+            for(auto &media : event.Media())
+            {
+                XMLElement* mediaElement = build_media(doc, media);
+                programmeEventElement->InsertEndChild(mediaElement);
+            }         
+            
+            // genre
+            for(auto &genre : event.Genres())
+            {
+                XMLElement* genreElement = build_genre(doc, genre);
+                programmeEventElement->InsertEndChild(genreElement);
+            }
+            
+            // keywords
+            if(event.Keywords().size() > 0)
+            {
+                vector<string> keywords = event.Keywords();
+                XMLElement* keywordsElement = build_keywords(doc, keywords);
+                programmeEventElement->InsertEndChild(keywordsElement);
+            }
+
+            // links
+            for(auto &link : event.Links())
+            {
+                XMLElement* linkElement = build_link(doc, link);
+                programmeEventElement->InsertEndChild(linkElement);
+            }                
+                
+            // memberships
+            for(auto &membership : event.Memberships())
+            {
+                XMLElement* membershipElement = build_membership(doc, membership);
+                programmeEventElement->InsertEndChild(membershipElement);
+            }  
+            
+            return programmeEventElement;    
+        }
+        
+        XMLElement* XmlMarshaller::build_location(XMLDocument* doc, Location &location) const
+        {
+            XMLElement* locationElement = doc->NewElement("location");
+            
+            // bearers
+            for(auto &bearer : location.Bearers())
+            {
+                XMLElement* bearerElement = build_bearer(doc, bearer);
+                locationElement->InsertEndChild(bearerElement);
+            }
+            
+            // times
+            for(auto &time : location.AbsoluteTimes())
+            {
+                XMLElement* timeElement = doc->NewElement("time");
+                timeElement->SetAttribute("time", build_datetime(time.BilledTime()).c_str());
+                timeElement->SetAttribute("duration", build_duration(time.BilledDuration()).c_str());
+                timeElement->SetAttribute("actualTime", build_datetime(time.ActualTime()).c_str());
+                timeElement->SetAttribute("actualDuration", build_duration(time.ActualDuration()).c_str());
+                locationElement->InsertEndChild(timeElement);
+            }
+            for(auto &time : location.RelativeTimes())
+            {
+                XMLElement* timeElement = doc->NewElement("relativeTime");
+                timeElement->SetAttribute("time", build_duration(time.BilledTime()).c_str());
+                timeElement->SetAttribute("duration", build_duration(time.BilledDuration()).c_str());
+                timeElement->SetAttribute("actualTime", build_duration(time.ActualTime()).c_str());
+                timeElement->SetAttribute("actualDuration", build_duration(time.ActualDuration()).c_str());                
+                locationElement->InsertEndChild(timeElement);
+            }
+            
+            return locationElement;
+        }
+        
+        XMLElement* XmlMarshaller::build_membership(XMLDocument* doc, Membership &membership) const
+        {
+            XMLElement* membershipElement = doc->NewElement("memberOf");
+            membershipElement->SetAttribute("id", membership.Id().c_str());
+            membershipElement->SetAttribute("shortId", membership.ShortId());
+            return membershipElement;
+        }        
+        
+        XMLElement* XmlMarshaller::build_bearer(XMLDocument* doc, Bearer *bearer) const
+        {
+            XMLElement* bearerElement = doc->NewElement("bearer");
+            bearerElement->SetAttribute("id", bearer->URI().c_str());
+            bearerElement->SetAttribute("cost", bearer->Cost());
+            
+            if(bearer->Cost() > 0)
+            {
+                bearerElement->SetAttribute("cost", bearer->Cost());
+            }
+            
+            if(bearer->Offset() > 0)
+            {
+                bearerElement->SetAttribute("offset", bearer->Offset());
+            }   
+            
+            if(dynamic_cast<DigitalBearer*>(bearer) != nullptr) 
+            {
+                DigitalBearer* digitalBearer = dynamic_cast<DigitalBearer*>(bearer);
+                if(!digitalBearer->Content().empty())
+                {
+                    bearerElement->SetAttribute("mimeValue", digitalBearer->Content().c_str());
+                }  
+                if(digitalBearer->Bitrate() > 0)
+                {
+                    bearerElement->SetAttribute("bitrate", digitalBearer->Bitrate());
+                }     
+            }      
+            
+            return bearerElement;                                      
+        }
 
         XMLElement* XmlMarshaller::build_service(XMLDocument* doc, Service &service) const
         {
@@ -80,33 +369,7 @@ namespace hybridspi
             // bearers
             for(auto *bearer : service.Bearers())
             {
-                XMLElement* bearerElement = doc->NewElement("bearer");
-                bearerElement->SetAttribute("id", bearer->URI().c_str());
-                bearerElement->SetAttribute("cost", bearer->Cost());
-                
-                if(bearer->Cost() > 0)
-                {
-                    bearerElement->SetAttribute("cost", bearer->Cost());
-                }
-                
-                if(bearer->Offset() > 0)
-                {
-                    bearerElement->SetAttribute("offset", bearer->Offset());
-                }   
-                
-                if(dynamic_cast<DigitalBearer*>(bearer) != nullptr) 
-                {
-                    DigitalBearer* digitalBearer = dynamic_cast<DigitalBearer*>(bearer);
-                    if(!digitalBearer->Content().empty())
-                    {
-                        bearerElement->SetAttribute("mimeValue", digitalBearer->Content().c_str());
-                    }  
-                    if(digitalBearer->Bitrate() > 0)
-                    {
-                        bearerElement->SetAttribute("bitrate", digitalBearer->Bitrate());
-                    }     
-                }                                            
-
+                XMLElement* bearerElement = build_bearer(doc, bearer);                                  
                 serviceElement->InsertEndChild(bearerElement);
             }
             
@@ -186,7 +449,7 @@ namespace hybridspi
         {
             XMLElement* mediaDescriptionElement = doc->NewElement("mediaDescription");
             XMLElement* descriptionElement;
-            if(description.MaxLength() <= 128)
+            if(description.MaxLength() <= 180)
             {
                 descriptionElement = doc->NewElement("shortDescription");
             }

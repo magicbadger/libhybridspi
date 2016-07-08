@@ -48,6 +48,22 @@ namespace hybridspi
 
                 XMLElement* build_link(XMLDocument* doc, Link &link) const;
                 
+                XMLElement* build_schedule(XMLDocument* doc, Schedule &schedule) const;
+                
+                XMLElement* build_programme(XMLDocument* doc, Programme &programme) const;
+
+                XMLElement* build_event(XMLDocument* doc, ProgrammeEvent &event) const;                
+                
+                XMLElement* build_membership(XMLDocument* doc, Membership &membership) const;
+                
+                XMLElement* build_location(XMLDocument* doc, Location &location) const;
+                
+                XMLElement* build_bearer(XMLDocument* doc, Bearer *bearer) const;
+                               
+                string build_datetime(const DateTime &datetime) const;
+                
+                string build_duration(const Duration &duration) const;
+                
                 // unmarshalling
                 Service parse_service(XMLElement* serviceElement) const;
                 

@@ -6,12 +6,17 @@
 #include <vector>
 #include <regex>
 #include <bitset>
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
 using namespace std::chrono;
 
-using DateTime = time_point<system_clock>;
+using Clock = std::chrono::system_clock;
+
+using DateTime = time_point<Clock>;
 using Duration = seconds;
+
 
 using bytes = vector<unsigned char>;
 
@@ -33,6 +38,11 @@ namespace hybridspi
     }
 
     vector<unsigned char> operator+(const vector<unsigned char> &a, const vector<unsigned char> &b);
+
+    DateTime make_datetime(string text, string format);
+
+    DateTime make_datetime(int year, int month, int day, int hour,
+                           int min, int sec, int usec, int isDST = -1);
     
     class BaseText
     {
@@ -95,7 +105,7 @@ namespace hybridspi
             
             vector<Name> Names(int maxlength) const;
             
-            void AddName(Name name);
+            void AddName(const Name &name);
             
             void RemoveName(const Name &name);
             
@@ -392,47 +402,29 @@ namespace hybridspi
             string description;
     };
     
-    class AbsoluteTime
-    {
-        public:
-        
-            AbsoluteTime(DateTime billedTime, Duration billedDuration, DateTime actualTime, Duration actualDuration);
-            
-            DateTime BilledTime() { return billedTime; };
-            
-            DateTime ActualTime() { return actualTime; };
-            
-            Duration BilledDuration() { return billedDuration; };
-            
-            Duration ActualDuration() { return actualDuration; };
-            
-        private:
-        
-            DateTime billedTime, actualTime;
-            
-            Duration billedDuration, actualDuration;
-            
-    };
-    
     class Membership
     {
         public:
         
-            Membership(short shortcrid, string crid, short index);
+            Membership(string id, unsigned short shortId, unsigned short index = 1);
             
-            short ShortCrid() { return shortcrid; };
+            unsigned short ShortId() { return shortId; };
             
-            string Crid() { return crid; };
+            string Id() { return id; };
             
-            short Index() { return index; };
+            unsigned short Index() { return index; };
+            
+            bool operator== (const Membership &that) const;
+            
+            bool operator!= (const Membership &that) const;             
         
         private:
         
-            short shortcrid;
+            unsigned short shortId;
             
-            string crid;
+            string id;
             
-            short index;
+            unsigned short index;
         
     };
     
@@ -513,7 +505,7 @@ namespace hybridspi
             
             vector<Description> Descriptions(int max_length) const;
             
-            void AddDescription(Description description);
+            void AddDescription(const Description &description);
             
             void RemoveDescription(const Description &description);
             
@@ -530,7 +522,7 @@ namespace hybridspi
             
             vector<Link> Links() const { return links; };
             
-            void AddLink(Link link);
+            void AddLink(const Link &link);
             
             void RemoveLink(const Link &link);
             
@@ -543,9 +535,9 @@ namespace hybridspi
     {
         public:
         
-            void AddKeyword(string keyword);
+            void AddKeyword(const string &keyword);
         
-            void AddKeywords(string keywords);
+            void AddKeywords(const string &keywords);
             
             void RemoveKeyword(const string &keyword);
             
@@ -564,7 +556,7 @@ namespace hybridspi
             
             vector<Multimedia> Media() const { return media; };
             
-            void AddMedia(Multimedia multimedia);
+            void AddMedia(const Multimedia &multimedia);
             
             void RemoveMedia(const Multimedia &multimedia);
             
@@ -581,7 +573,7 @@ namespace hybridspi
             
             vector<Genre> Genres() const { return genres; };
             
-            void AddGenre(Genre genre);
+            void AddGenre(const Genre &genre);
             
             void RemoveGenre(const Genre &genre);
             
@@ -589,6 +581,21 @@ namespace hybridspi
         
             vector<Genre> genres;        
     };  
+    
+    // class Interval
+    // {
+    //     public:
+        
+    //         Interval(DateTime start, DateTime end);
+            
+    //         DateTime Start() { return start; };
+            
+    //         DateTime End() { return end; };
+            
+    //     private:
+        
+    //         DateTime start, end;
+    // }
     
 }
 
