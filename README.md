@@ -1,7 +1,7 @@
 Building
 --------
 
-autoconf
-./configure [CPPFLAGS="-I...]
+autoreconf -if
+./configure
 make
 make install

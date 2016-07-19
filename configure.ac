@@ -125,7 +125,7 @@ case "${host_os}" in
 esac
 
 # Checks for libraries
-PKG_CHECK_MODULES([LIBMOT], [mot]) # libmot
+PKG_CHECK_MODULES([LIBMOT], [libmot]) # libmot
 PKG_CHECK_MODULES([TINYXML2], [tinyxml2 >= 3.0.0]) # tinyxml2
 
 # Check whether to build docs / install man pages
@@ -183,7 +183,8 @@ AC_SUBST([pkgconfigdir])
 
 AC_CONFIG_FILES([ \
     Makefile \
-    src/libhybridspi.pc \
+    include/Makefile \
+    libhybridspi.pc \
     doc/Makefile])
 
 AC_OUTPUT

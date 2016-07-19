@@ -1,18 +1,11 @@
-ACLOCAL_AMFLAGS=-I config
+ACLOCAL_AMFLAGS = -I config
+
+SUBDIRS = doc include
 
 #
 # Library 
 #
 lib_LTLIBRARIES = src/libhybridspi.la
-
-include_HEADERS = \
-    include/hybridspi/programmes.h \
-    include/hybridspi/groups.h \
-    include/hybridspi/services.h \
-    include/hybridspi/marshall.h \
-    include/hybridspi/binary.h \
-    include/hybridspi/xml.h \
-    include/hybridspi/common.h
 
 src_libhybridspi_la_SOURCES = \
     src/hybridspi/common.cpp \
@@ -23,9 +16,9 @@ src_libhybridspi_la_SOURCES = \
     src/hybridspi/groups.cpp \
     src/hybridspi/services.cpp 
 
-src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} -Wall -Wno-shift-count-overflow
+src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} 
 src_libhybridspi_la_CXXFLAGS = @LIBHYBRIDSPI_EXTRA_CXXFLAGS@
-src_libhybridspi_la_LIBADD = -L${LIBMOT_LIBS} ${TINYXML2_LIBS}
+src_libhybridspi_la_LIBADD = ${LIBMOT_LIBS} ${TINYXML2_LIBS}
 
 # 
 # Binaries
@@ -89,8 +82,8 @@ tests_test_build_bearer_CPPFLAGS = -Iinclude
 tests_test_build_bearer_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_test_header_parameters_SOURCES = tests/test_header_parameters.cpp 
-tests_test_header_parameters_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS}
-tests_test_header_parameters_LDADD = -Lsrc/.libs -lhybridspi -L${LIBMOT_LIBS} -lmot
+tests_test_header_parameters_CPPFLAGS = -Iinclude ${LIBMOT_CFLAGS}
+tests_test_header_parameters_LDADD = -Lsrc/.libs -lhybridspi ${LIBMOT_LIBS}
 
 tests_marshall_serviceinfo_minimal_xml_SOURCES = tests/marshall_serviceinfo_minimal_xml.cpp
 tests_marshall_serviceinfo_minimal_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
