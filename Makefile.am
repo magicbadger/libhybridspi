@@ -16,7 +16,7 @@ src_libhybridspi_la_SOURCES = \
     src/hybridspi/groups.cpp \
     src/hybridspi/services.cpp 
 
-src_libhybridspi_la_CPPFLAGS = -Iinclude -I${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} 
+src_libhybridspi_la_CPPFLAGS = -Iinclude ${LIBMOT_CFLAGS} ${TINYXML2_CFLAGS} 
 src_libhybridspi_la_CXXFLAGS = @LIBHYBRIDSPI_EXTRA_CXXFLAGS@
 src_libhybridspi_la_LIBADD = ${LIBMOT_LIBS} ${TINYXML2_LIBS}
 
@@ -75,7 +75,7 @@ tests_test_encode_timepoint_LDADD = -Lsrc/.libs -lhybridspi
 
 tests_test_build_name_SOURCES = tests/test_build_name.cpp 
 tests_test_build_name_CPPFLAGS = -Iinclude
-tests_test_build_name_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_build_name_LDADD =  -Lsrc/.libs -lhybridspi
 
 tests_test_build_bearer_SOURCES = tests/test_build_bearer.cpp 
 tests_test_build_bearer_CPPFLAGS = -Iinclude
