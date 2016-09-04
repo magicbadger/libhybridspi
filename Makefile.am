@@ -44,9 +44,9 @@ test_apps = \
     tests/test_encode_timepoint \
     tests/test_encode_cdata \
     tests/test_encode_attribute \
-    tests/test_build_name \
-    tests/test_build_bearer \
-    tests/test_header_parameters \
+    tests/test_encode_bearer \
+    tests/test_encode_name \
+    tests/test_encode_header_parameters \
     tests/marshall_serviceinfo_minimal_xml \
     tests/marshall_serviceinfo_minimal_binary \
     tests/marshall_programmeinfo_minimal_xml \
@@ -54,36 +54,36 @@ test_apps = \
     tests/unmarshall_serviceinfo_spec_xml
 
 tests_test_encode_attribute_SOURCES = tests/test_encode_attribute.cpp 
-tests_test_encode_attribute_CPPFLAGS = -Iinclude
-tests_test_encode_attribute_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_attribute_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_attribute_LDADD = -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
 tests_test_encode_cdata_SOURCES = tests/test_encode_cdata.cpp 
-tests_test_encode_cdata_CPPFLAGS = -Iinclude
-tests_test_encode_cdata_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_cdata_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_cdata_LDADD = -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
 tests_test_encode_string_SOURCES = tests/test_encode_string.cpp 
-tests_test_encode_string_CPPFLAGS = -Iinclude
-tests_test_encode_string_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_string_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_string_LDADD = -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
 tests_test_encode_number_SOURCES = tests/test_encode_number.cpp 
-tests_test_encode_number_CPPFLAGS = -Iinclude
-tests_test_encode_number_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_number_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_number_LDADD = -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
 tests_test_encode_timepoint_SOURCES = tests/test_encode_timepoint.cpp 
-tests_test_encode_timepoint_CPPFLAGS = -Iinclude
-tests_test_encode_timepoint_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_timepoint_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_timepoint_LDADD = -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
-tests_test_build_name_SOURCES = tests/test_build_name.cpp 
-tests_test_build_name_CPPFLAGS = -Iinclude
-tests_test_build_name_LDADD =  -Lsrc/.libs -lhybridspi
+tests_test_encode_name_SOURCES = tests/test_encode_name.cpp 
+tests_test_encode_name_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_name_LDADD =  -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
-tests_test_build_bearer_SOURCES = tests/test_build_bearer.cpp 
-tests_test_build_bearer_CPPFLAGS = -Iinclude
-tests_test_build_bearer_LDADD = -Lsrc/.libs -lhybridspi
+tests_test_encode_bearer_SOURCES = tests/test_encode_bearer.cpp 
+tests_test_encode_bearer_CPPFLAGS = -Iinclude ${CPPUNIT_CFLAGS}
+tests_test_encode_bearer_LDADD = -Lsrc/.libs -lhybridspi ${CPPUNIT_LIBS}
 
-tests_test_header_parameters_SOURCES = tests/test_header_parameters.cpp 
-tests_test_header_parameters_CPPFLAGS = -Iinclude ${LIBMOT_CFLAGS}
-tests_test_header_parameters_LDADD = -Lsrc/.libs -lhybridspi ${LIBMOT_LIBS}
+tests_test_encode_header_parameters_SOURCES = tests/test_encode_header_parameters.cpp 
+tests_test_encode_header_parameters_CPPFLAGS = -Iinclude ${LIBMOT_CFLAGS} ${CPPUNIT_CFLAGS}
+tests_test_encode_header_parameters_LDADD = -Lsrc/.libs -lhybridspi ${LIBMOT_LIBS} ${CPPUNIT_LIBS}
 
 tests_marshall_serviceinfo_minimal_xml_SOURCES = tests/marshall_serviceinfo_minimal_xml.cpp
 tests_marshall_serviceinfo_minimal_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}

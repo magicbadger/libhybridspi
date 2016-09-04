@@ -6,55 +6,58 @@
 
 namespace hybridspi
 {
-
-    ScopeStart::ScopeStart(DateTime timepoint)
-        : HeaderParameter(0x25), timepoint(timepoint)
-    { }
-
-    bool ScopeStart::equals(const HeaderParameter& other) const
+    namespace mot
     {
-        const ScopeStart* that = dynamic_cast<const ScopeStart*>(&other);
-        return that != nullptr && (this->timepoint == that->timepoint);
-    }
 
-    vector<unsigned char> ScopeStart::EncodeData() const
-    {
-        return hybridspi::binary::encode_timepoint(timepoint);
-    }
+        ScopeStart::ScopeStart(DateTime timepoint)
+            : HeaderParameter(0x25), timepoint(timepoint)
+        { }
 
-    ScopeEnd::ScopeEnd(DateTime timepoint)
-        : HeaderParameter(0x26), timepoint(timepoint)
-    { }
+        bool ScopeStart::equals(const HeaderParameter& other) const
+        {
+            const ScopeStart* that = dynamic_cast<const ScopeStart*>(&other);
+            return that != nullptr && (this->timepoint == that->timepoint);
+        }
 
-    bool ScopeEnd::equals(const HeaderParameter& other) const
-    {
-        const ScopeEnd* that = dynamic_cast<const ScopeEnd*>(&other);
-        return that != nullptr && (this->timepoint == that->timepoint);
-    }
+        vector<unsigned char> ScopeStart::EncodeData() const
+        {
+            return hybridspi::binary::encode_timepoint(timepoint);
+        }
 
-    vector<unsigned char> ScopeEnd::EncodeData() const
-    {
-        return hybridspi::binary::encode_timepoint(timepoint);
-    }
+        ScopeEnd::ScopeEnd(DateTime timepoint)
+            : HeaderParameter(0x26), timepoint(timepoint)
+        { }
 
-    ScopeId::ScopeId(content_id scope)
-        : HeaderParameter(0x27), scope(scope)
-    { }
+        bool ScopeEnd::equals(const HeaderParameter& other) const
+        {
+            const ScopeEnd* that = dynamic_cast<const ScopeEnd*>(&other);
+            return that != nullptr && (this->timepoint == that->timepoint);
+        }
 
-    ScopeId::ScopeId(unsigned int ecc, unsigned int eid)
-        : HeaderParameter(0x27), scope(content_id({ecc, eid}))
-    { }
+        vector<unsigned char> ScopeEnd::EncodeData() const
+        {
+            return hybridspi::binary::encode_timepoint(timepoint);
+        }
 
-    bool ScopeId::equals(const HeaderParameter& other) const
-    {
-        const ScopeId* that = dynamic_cast<const ScopeId*>(&other);
-        return that != nullptr && this->scope == that->scope;
-    }
+        ScopeId::ScopeId(content_id scope)
+            : HeaderParameter(0x27), scope(scope)
+        { }
 
-    vector<unsigned char> ScopeId::EncodeData() const
-    {
-        bitset<24> bits(scope.eid + // EId (16)
-                        ((scope.ecc) << 16)); // ECC (8)
-        return bits_to_bytes(bits);
+        ScopeId::ScopeId(unsigned int ecc, unsigned int eid)
+            : HeaderParameter(0x27), scope(content_id({ecc, eid}))
+        { }
+
+        bool ScopeId::equals(const HeaderParameter& other) const
+        {
+            const ScopeId* that = dynamic_cast<const ScopeId*>(&other);
+            return that != nullptr && this->scope == that->scope;
+        }
+
+        vector<unsigned char> ScopeId::EncodeData() const
+        {
+            bitset<24> bits(scope.eid + // EId (16)
+                            ((scope.ecc) << 16)); // ECC (8)
+            return bits_to_bytes(bits);
+        }
     }
 }

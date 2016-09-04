@@ -13,23 +13,25 @@
 using namespace hybridspi;
 using namespace hybridspi::binary;
 
-class EncodeCdataTest : public CppUnit::TestFixture 
+class EncodeNameTest : public CppUnit::TestFixture 
 {
 
-    CPPUNIT_TEST_SUITE(EncodeCdataTest);
-    CPPUNIT_TEST(testCdataShort);
+    CPPUNIT_TEST_SUITE(EncodeNameTest);
+    CPPUNIT_TEST(testEncodeShortName);
     CPPUNIT_TEST_SUITE_END();
     
-    void testCdataShort()
+    void testEncodeShortName()
     {
-        CData data("testing");
-        CPPUNIT_ASSERT(bytes_to_hex(data.encode()) == "01 07 74 65 73 74 69 6E 67");
+        ShortName name("Heart");
+        Element e = build_name(name);
+        CPPUNIT_ASSERT(bytes_to_hex(e.encode()) == "10 07 01 05 48 65 61 72 74");
     }
+
 };
 
 int main()
 {
     CppUnit::TextTestRunner runner;
-    runner.addTest(EncodeCdataTest::suite());
+    runner.addTest(EncodeNameTest::suite());
     return (runner.run() ? 0 : 1);
 }

@@ -7,15 +7,23 @@
 #include <hybridspi/binary.h>
 #include <hybridspi/util.h>
 
-#include "test_util.h"
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/ui/text/TextTestRunner.h>
 
-using namespace std;
-using namespace std::chrono;
 using namespace hybridspi;
 using namespace hybridspi::binary;
 
-int main()
+class EncodeTimepointTest : public CppUnit::TestFixture 
 {
+
+    CPPUNIT_TEST_SUITE(EncodeTimepointTest);   
+    CPPUNIT_TEST(testTimepointToMjd);
+    CPPUNIT_TEST(testEncodedTimepointLong);
+    CPPUNIT_TEST(testEncodedTimepointShort);
+    CPPUNIT_TEST(testEncodedTimepointShortAttribute);
+    CPPUNIT_TEST_SUITE_END();
+
+    void testTimepointToMjd()
     {
         tm t = {};
         stringstream ss("2015-09-21T06:30:15");
@@ -24,9 +32,10 @@ int main()
         auto tp = std::chrono::system_clock::from_time_t(epoch);
                 
         int mjd = timepoint_to_mjd(tp);
-        ASSERT("timepoint to MJD", mjd, 57286);
+        CPPUNIT_ASSERT(mjd == 57286);
     }
     
+    void testEncodedTimepointLong()
     {
         tm t = {};
         stringstream ss("2015-09-21T06:30:15");
@@ -34,9 +43,10 @@ int main()
         auto epoch = mktime(&t);
         auto tp = std::chrono::system_clock::from_time_t(epoch);        
 
-        ASSERT("encoded timepoint long", bytes_to_hex(encode_timepoint(tp)), "37 F1 89 9E 3C 00");
+        CPPUNIT_ASSERT(bytes_to_hex(encode_timepoint(tp)) == "37 F1 89 9E 3C 00");
     }
     
+    void testEncodedTimepointShort()
     {
         tm t = {};
         stringstream ss("2016-02-29T15:11:00");
@@ -44,9 +54,10 @@ int main()
         auto epoch = mktime(&t);
         auto tp = std::chrono::system_clock::from_time_t(epoch);        
 
-        ASSERT("encoded timepoint short", bytes_to_hex(encode_timepoint(tp)), "38 19 C3 CB");
+        CPPUNIT_ASSERT(bytes_to_hex(encode_timepoint(tp)) == "38 19 C3 CB");
     }
     
+    void testEncodedTimepointShortAttribute()
     {
         tm t = {};
         stringstream ss("2016-02-29T15:11:00");
@@ -55,10 +66,13 @@ int main()
         auto tp = std::chrono::system_clock::from_time_t(epoch);  
         Attribute a(0x81, encode_timepoint(tp));              
 
-        ASSERT("encoded timepoint short attribute", bytes_to_hex(a.encode()), "81 04 38 19 C3 CB");        
-        
-
+        CPPUNIT_ASSERT(bytes_to_hex(a.encode()) == "81 04 38 19 C3 CB");        
     }
+};
 
-    return 0;
+int main()
+{
+    CppUnit::TextTestRunner runner;
+    runner.addTest(EncodeTimepointTest::suite());
+    return (runner.run() ? 0 : 1);
 }

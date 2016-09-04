@@ -4,8 +4,6 @@
 #include <vector>
 #include <bitset>
 
-using namespace std;
-
 template<size_t size>
 inline std::vector<unsigned char> bits_to_bytes(bitset<size> bits)
 {
@@ -18,17 +16,17 @@ inline std::vector<unsigned char> bits_to_bytes(bitset<size> bits)
 }
 
 char const h[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
 inline std::string bytes_to_hex(std::vector<unsigned char> bytes)
 {
-    std::string str;
-    for(int i = 0; i < (int)bytes.size(); i++) {
-        unsigned char c = bytes.at(i);
-        str += (h[(c & 0xF0) >> 4]);
-        str += (h[c & 0x0F]);
-        if(i < (int)bytes.size() - 1) str += (' ');
+    std::stringstream ss;
+    ss << std::uppercase << std::hex << std::setfill('0');
+    for (int i = 0; i < bytes.size(); i++)
+    {
+        //ss << std::uppercase << std::setw(2) << static_cast<unsigned>(bytes[i]);
+        ss << std::setw(2) << static_cast<unsigned int>(bytes[i]);
+        if(i < bytes.size() - 1) ss << ' ';
     }
-    return str;
+    return ss.str();
 }
 
 template <int size>
