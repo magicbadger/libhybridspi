@@ -1,0 +1,15 @@
+<epg xmlns="http://www.worlddab.org/schemas/spi/31" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xml="http://www.w3.org/XML/1998/namespace" xsi:schemaLocation="http://www.worlddab.org/schemas/spi/31 spi_31.xsd">
+    <schedule creationTime="2016-09-04T11:40:55">
+        <scope startTime="2014-04-25T06:00:00" stopTime="2014-04-25T10:00:00"/>
+        <programme shortId="1190223" id="crid://www.capitalfm.com/4772/1190223">
+            <mediumName>Breakfast</mediumName>
+            <mediaDescription>
+                <shortDescription>Forget the coffee, Capital gives you the perfect morning pick-me- up with a blend of the latest hits, travel news and incomparable morning banter.</shortDescription>
+            </mediaDescription>
+            <location>
+                <time time="2014-04-25T06:00:00" duration="PT14400S" actualTime="2014-04-25T06:00:00" actualDuration="PT14400S"/>
+            </location>
+        </programme>
+    </schedule>
+</epg>
+
