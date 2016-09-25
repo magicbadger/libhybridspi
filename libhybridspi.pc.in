@@ -9,3 +9,5 @@ Version: @VERSION@
 Libs: -L${libdir} -lhybridspi
 Libs.private: -lstdc++
 Cflags: -I${includedir}
+Requires: @AX_PACKAGE_REQUIRES@
+Requires.private: @AX_PACKAGE_REQUIRES_PRIVATE@

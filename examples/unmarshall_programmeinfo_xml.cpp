@@ -8,10 +8,10 @@
 using namespace hybridspi;
 using namespace hybridspi::xml;
 
-int main()
+int main(int argc, char* argv[])
 {
-    cout << "reading file" << endl;
-    ifstream ifs("examples/PI_minimal.xml");
+    cout << "reading from: " << argv[0] << endl;
+    ifstream ifs(argv[1]);
     string content((istreambuf_iterator<char>(ifs)),
                    (istreambuf_iterator<char>()));
     cout << "read " << content.size() << " bytes"  << endl;
@@ -45,6 +45,17 @@ int main()
             for(auto &media : programme.Media())
             {
                 cout << media << endl;
+            }
+            for(auto &membership : programme.Memberships())
+            {
+                cout << membership.Id() << endl;
+            }
+            for(auto &location : programme.Locations())
+            {
+                for(auto *bearer : location.Bearers())
+                {
+                    cout << bearer->URI() << endl;
+                }
             }
         }
         cout << endl;

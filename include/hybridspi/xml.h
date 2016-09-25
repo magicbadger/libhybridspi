@@ -2,6 +2,7 @@
 #define HYBRIDSPI_XML_H
 
 #include <hybridspi/marshall.h>
+#include <hybridspi/common.h>
 #include <vector>
 #include <tinyxml2.h>
 
@@ -32,7 +33,7 @@ namespace hybridspi
                 GroupInfo UnmarshallGroupInfo(vector<unsigned char> bytes) const;                
                 
             private:
-            
+
                 // marshalling
                 XMLElement* build_service(XMLDocument *doc, Service &service) const;
                 
@@ -70,8 +71,37 @@ namespace hybridspi
                 Name parse_name(XMLElement* element) const;   
                 
                 Description parse_description(XMLElement* element) const;
+
+                Schedule parse_schedule(XMLElement* element) const;
+
+                Programme parse_programme(XMLElement* element) const;
+
+                Location parse_location(XMLElement* locationElement) const;
                                              
         };        
+
+        DateTime parse_datetime(string input);
+
+        Duration parse_duration(string input);
+
+        // exceptions
+
+        class invalid_duration: public exception
+        {
+
+            std::string duration_string;
+
+            public: 
+
+            invalid_duration(const string duration_string) 
+                : duration_string(duration_string)
+            {}
+
+            virtual const char* what() const throw()
+            {
+                return ("invalid duration string: " + duration_string).c_str();
+            }
+        };
     }
 }
 

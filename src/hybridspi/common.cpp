@@ -235,12 +235,12 @@ namespace hybridspi
         return !(*this == that);
     }    
     
-    void GeoLocated::AddLocation(GeoLocation* geolocation)
+    void GeoLocated::AddGeoLocation(GeoLocation* geolocation)
     {
         geolocations.push_back(geolocation);
     }
     
-    void GeoLocated::RemoveLocation(GeoLocation* geolocation)
+    void GeoLocated::RemoveGeoLocation(GeoLocation* geolocation)
     {
         auto it = std::find(geolocations.begin(), geolocations.end(), geolocation);
         if(it != geolocations.end())

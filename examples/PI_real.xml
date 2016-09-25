@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epg xml:lang="en" xmlns="http://www.worlddab.org/schemas/spi/31" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.worlddab.org/schemas/spi/31 spi_31.xsd">
+ <schedule creationTime="2016-09-23T16:55:54" originator="Global Radio">
+  <scope startTime="2016-09-28T22:00:00+01:00" stopTime="2016-09-30T01:00:00+01:00"/>
+  <programme id="crid://epg.musicradio.com/programmes/650/3385690" shortId="3385690">
+   <shortName>Lucy</shortName>
+   <mediumName>Lucy Ellis</mediumName>
+   <longName>Lucy Ellis</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-28T22:00:00+01:00" duration="PT3H0M" time="2016-09-28T22:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Whether you're on a nightshift, on your way home from a night out or getting up early, Lucy's got your soundtrack.</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/7aff9f7e-0ab9-4f6d-8da3-c7721a32be56.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/85c3201e-2083-4ca1-b540-9684e0d515f6.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/650" shortId="650"/>
+   <link uri="http://www.heart.co.uk/thamesvalley/on-air/lucy-ellis"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/880/2997380" shortId="2997380">
+   <shortName>Simon B</shortName>
+   <mediumName>Simon Beale</mediumName>
+   <longName>Simon Beale</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-29T01:00:00+01:00" duration="PT3H0M" time="2016-09-29T01:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Whether you're on a nightshift, on your way home from a night out or getting up early, Simon's got your soundtrack.</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/7aff9f7e-0ab9-4f6d-8da3-c7721a32be56.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/85c3201e-2083-4ca1-b540-9684e0d515f6.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/880" shortId="880"/>
+   <link uri="http://www.heart.co.uk/on-air/simon-beale"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/2802/2997381" shortId="2997381">
+   <shortName>Jenni</shortName>
+   <mediumName>Jenni Falconer</mediumName>
+   <longName>Early Breakfast with Jenni Falconer</longName>
+   <location>
+    <time actualDuration="PT2H0M" actualTime="2016-09-29T04:00:00+01:00" duration="PT2H0M" time="2016-09-29T04:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Jenni helps you out of bed with more music variety to start your day!</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/e3684a28-ce2a-4378-97f9-3cda84eab49b.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/c9290c50-d4a9-40e6-8258-7f979ddb9bc1.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/2802" shortId="2802"/>
+   <link uri="http://www.heart.co.uk/on-air/jenni-falconer"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/2605/2997322" shortId="2997322">
+   <shortName>Brkfast</shortName>
+   <mediumName>Heart Breakfast</mediumName>
+   <longName>Heart Breakfast with Jamie and Emma</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-29T06:00:00+01:00" duration="PT3H0M" time="2016-09-29T06:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Jamie Theakston and Emma Bunton bring you London's favourite breakfast show. It's your show so join in!</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/89a8191b-911b-466f-b338-fb7b7c8b807b.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/5295e582-7c25-4df1-9a50-1af4c3be14fa.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/2605" shortId="2605"/>
+   <link uri="http://www.heart.co.uk/london/on-air/breakfast"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/876/2997323" shortId="2997323">
+   <shortName>Toby</shortName>
+   <mediumName>Toby Anstis</mediumName>
+   <longName>Toby Anstis</longName>
+   <location>
+    <time actualDuration="PT4H0M" actualTime="2016-09-29T09:00:00+01:00" duration="PT4H0M" time="2016-09-29T09:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Guess today's Time Tunnel year from 9 then Toby will turn up the feel good for your workday with Heart's Happy Hour from 11!</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/05ae130d-14b3-4dba-b04b-18da8ca508cc.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/dce1ec4f-a390-4b5a-9fb6-a9bfabf802a9.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/876" shortId="876"/>
+   <link uri="http://www.heart.co.uk/on-air/toby-anstis"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/2350/2997382" shortId="2997382">
+   <shortName>MattW</shortName>
+   <mediumName>Matt Wilkinson</mediumName>
+   <longName>Matt Wilkinson</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-29T13:00:00+01:00" duration="PT3H0M" time="2016-09-29T13:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Matt keeps you company whilst you work or pick up the kids. Plus he'll stick a massive smile on your face with Heart's Happy Hour from 2!</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/6eb85fc8-cd61-44fc-8e3b-fc67b9c5fca4.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/7f47d453-e2ed-4770-94bf-f86f5736701b.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/2350" shortId="2350"/>
+   <link uri="http://www.heart.co.uk/on-air/matt-wilkinson"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/2606/2997324" shortId="2997324">
+   <shortName>JK&amp;Lucy</shortName>
+   <mediumName>JK and Lucy</mediumName>
+   <longName>JK and Lucy</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-29T16:00:00+01:00" duration="PT3H0M" time="2016-09-29T16:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>JK &amp; Lucy help get you home with plenty of laughs and travel news that keeps London moving. Don't miss the big 5@5 for five feel good songs that'll blow away that workday stress!</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/ae2cc538-1fa5-40be-8d27-de4312ea674b.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/4853ad36-2dfa-4fcd-b77e-beb74a5df1af.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/2606" shortId="2606"/>
+   <link uri="http://www.heart.co.uk/london/on-air/drivetime"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/2457/2997383" shortId="2997383">
+   <shortName>Roberto</shortName>
+   <mediumName>Roberto</mediumName>
+   <longName>Roberto</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-29T19:00:00+01:00" duration="PT3H0M" time="2016-09-29T19:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Whether you're in the Gym, cooking the dinner or getting ready for a night out, Roberto turns up the feel good with great tunes for the end of your day.</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/ed54f8c5-d83e-4f90-be55-cfa691b5ab32.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/be598994-3686-4c08-9899-d0f0024fb9ff.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/2457" shortId="2457"/>
+   <link uri="http://www.heart.co.uk/on-air/roberto"/>
+  </programme>
+  <programme id="crid://epg.musicradio.com/programmes/650/3385691" shortId="3385691">
+   <shortName>Lucy</shortName>
+   <mediumName>Lucy Ellis</mediumName>
+   <longName>Lucy Ellis</longName>
+   <location>
+    <time actualDuration="PT3H0M" actualTime="2016-09-29T22:00:00+01:00" duration="PT3H0M" time="2016-09-29T22:00:00+01:00"/>
+   </location>
+   <mediaDescription>
+    <longDescription>Whether you're on a nightshift, on your way home from a night out or getting up early, Lucy's got your soundtrack.</longDescription>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="320" url="http://mediaweb.musicradio.com/ArtWork/SES/c2953ee1-2a09-4e20-975f-383f95067c6a.png" width="600"/>
+   </mediaDescription>
+   <mediaDescription>
+    <multimedia height="2048" url="http://mediaweb.musicradio.com/ArtWork/SES/8a2fe380-0c37-41a2-8f33-48243ec65968.png" width="2048"/>
+   </mediaDescription>
+   <memberOf id="crid://epg.musicradio.com/programmes/650" shortId="650"/>
+   <link uri="http://www.heart.co.uk/thamesvalley/on-air/lucy-ellis"/>
+  </programme>
+ </schedule>
+</epg>

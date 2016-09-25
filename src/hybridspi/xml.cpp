@@ -11,7 +11,7 @@ namespace hybridspi
     {
         XmlMarshaller::XmlMarshaller()
             : Marshaller()
-        { }
+        { } 
 
         /**
          * Marshalling
@@ -128,17 +128,21 @@ namespace hybridspi
             // scope      
             XMLElement* scopeElement = doc->NewElement("scope");
             pair<DateTime, DateTime> scope = schedule.Scope();
+            DateTime undefined_datetime = system_clock::from_time_t(0); // TODO better check for this
+            if(scope.first != undefined_datetime && scope.second != undefined_datetime)  
             {
-                auto sss = build_datetime(scope.first);
-                const char* date_string = sss.c_str(); 
-                scopeElement->SetAttribute("startTime", date_string);                       
+                {
+                    auto sss = build_datetime(scope.first);
+                    const char* start_date_string = sss.c_str(); 
+                    scopeElement->SetAttribute("startTime", start_date_string);                       
+                }
+                {
+                    auto sss = build_datetime(scope.second);
+                    const char* stop_date_string = sss.c_str(); 
+                    scopeElement->SetAttribute("stopTime", stop_date_string);                  
+                }
+                scheduleElement->InsertEndChild(scopeElement);
             }
-            {
-                auto sss = build_datetime(scope.second);
-                const char* date_string = sss.c_str(); 
-                scopeElement->SetAttribute("stopTime", date_string);                  
-            }
-            scheduleElement->InsertEndChild(scopeElement);
             
             // programmes
             for(auto &programme : schedule.Programmes()) 
@@ -528,12 +532,27 @@ namespace hybridspi
          */
         ServiceInfo XmlMarshaller::UnmarshallServiceInfo(vector<unsigned char> bytes) const
         {
+            ServiceInfo info;
+
             XMLDocument doc;
             doc.Parse(reinterpret_cast<const char *>(&(bytes[0])));
             XMLElement* root = doc.FirstChildElement();
             XMLElement* servicesElement = root->FirstChildElement("services");
 
-            ServiceInfo info;
+            // creation time
+            const char* creationTimeAttribute = root->Attribute("creationTime");
+            if(creationTimeAttribute != nullptr) {
+                DateTime creationTime = parse_datetime(creationTimeAttribute);
+            }
+
+            // originator
+            const char* originatorAttribute = root->Attribute("originator");
+            if(originatorAttribute != nullptr) {
+                info.SetOriginator(string(originatorAttribute));
+            }            
+
+            // TODO parse provider info
+
             XMLElement* serviceElement = servicesElement->FirstChildElement("service");
             while(serviceElement != nullptr)
             {
@@ -547,7 +566,19 @@ namespace hybridspi
                     
         ProgrammeInfo XmlMarshaller::UnmarshallProgrammeInfo(vector<unsigned char> bytes) const
         {
+            XMLDocument doc;
+            doc.Parse(reinterpret_cast<const char *>(&(bytes[0])));
+            XMLElement* root = doc.FirstChildElement();
+
             ProgrammeInfo info;
+            XMLElement* scheduleElement = root->FirstChildElement("schedule");
+            while(scheduleElement != nullptr)
+            {
+                Schedule schedule = parse_schedule(scheduleElement);
+                info.AddSchedule(schedule);
+                scheduleElement = root->NextSiblingElement("schedule");
+            }
+
             return info;
         }
             
@@ -556,6 +587,7 @@ namespace hybridspi
             GroupInfo info;
             return info;
         }           
+
         
         Service XmlMarshaller::parse_service(XMLElement* serviceElement) const
         {                        
@@ -741,6 +773,197 @@ namespace hybridspi
                 return LongDescription(text);
             }
         }
+
+        Schedule XmlMarshaller::parse_schedule(XMLElement* element) const
+        {
+            Schedule schedule;
+            
+            // programmes
+            XMLElement* programmeElement = element->FirstChildElement("programme");
+            while(programmeElement != nullptr)
+            {
+                Programme programme = parse_programme(programmeElement);
+                schedule.AddProgramme(programme);
+                programmeElement = programmeElement->NextSiblingElement("programme");
+            }                
+
+            return schedule;
+        }
+
+        Programme XmlMarshaller::parse_programme(XMLElement* programmeElement) const
+        {
+            // identifier
+            string id = programmeElement->Attribute("id");
+            int shortId = atoi(programmeElement->Attribute("shortId"));
+            Programme programme(id, shortId);
+
+            // names
+            XMLElement* shortnameElement = programmeElement->FirstChildElement("shortName");
+            while(shortnameElement != nullptr)
+            {
+                programme.AddName(parse_name(shortnameElement));
+                shortnameElement = programmeElement->NextSiblingElement("shortName");
+            }
+            XMLElement* mediumnameElement = programmeElement->FirstChildElement("mediumName");
+            while(mediumnameElement != nullptr)
+            {
+                programme.AddName(parse_name(mediumnameElement));
+                mediumnameElement = programmeElement->NextSiblingElement("mediumName");
+            }
+            XMLElement* longnameElement = programmeElement->FirstChildElement("longName");
+            while(longnameElement != nullptr)
+            {
+                programme.AddName(parse_name(longnameElement));
+                longnameElement = longnameElement->NextSiblingElement("longName");
+            }
+
+            // descriptions
+            XMLElement* mediaDescriptionElement = programmeElement->FirstChildElement("mediaDescription");
+            while(mediaDescriptionElement != nullptr)
+            {
+                XMLElement* shortDescriptionElement = mediaDescriptionElement->FirstChildElement("shortDescription");
+                if(shortDescriptionElement != nullptr)
+                {
+                    programme.AddDescription(parse_description(shortDescriptionElement));
+                }
+                XMLElement* longDescriptionElement = mediaDescriptionElement->FirstChildElement("longDescription");
+                if(longDescriptionElement != nullptr)            
+                {
+                    programme.AddDescription(parse_description(longDescriptionElement));                
+                }
+                mediaDescriptionElement = mediaDescriptionElement->NextSiblingElement("mediaDescription");
+            }            
+
+            // logos
+            mediaDescriptionElement = programmeElement->FirstChildElement("mediaDescription");
+            while(mediaDescriptionElement != nullptr)
+            {
+                XMLElement* multimediaElement = mediaDescriptionElement->FirstChildElement("multimedia");
+                if(multimediaElement != nullptr)
+                {
+                    string url(multimediaElement->Attribute("url"));
+
+                    // mime type is required unless the type is defined as logo_colour_square or logo_colour_rectangle
+                    const char* type = multimediaElement->Attribute("type");
+                    const char* mimeValue = multimediaElement->Attribute("mimeValue");
+                    string content;
+                    if(type != nullptr && (strcmp(type, "logo_colour_square") == 0 || strcmp(type, "logo_colour_rectangle") == 0))
+                    {
+                        content = string("image/png");
+                    }
+                    else if(mimeValue != nullptr)
+                    {
+                        content = string(mimeValue);
+                    }
+                    else
+                    {
+                        // TODO throw parsing error
+                        cout << "Error - doesnt look like there is either a mime type or a recognised type against this logo: " << url << endl;
+                    }
+
+                    Multimedia media(url, content);
+
+                    const char* heightAttribute = multimediaElement->Attribute("height");
+                    const char* widthAttribute = multimediaElement->Attribute("width");
+                    if(heightAttribute != nullptr && widthAttribute != nullptr)
+                    {
+                        media.SetHeight(multimediaElement->IntAttribute("height"));
+                        media.SetWidth(multimediaElement->IntAttribute("width"));
+                    }
+
+                    programme.AddMedia(media);
+                }
+                mediaDescriptionElement = mediaDescriptionElement->NextSiblingElement("mediaDescription");                    
+            }
+            
+            // genres
+            XMLElement* genreElement = programmeElement->FirstChildElement("genre");
+            while(genreElement != nullptr)
+            {
+                string href(genreElement->Attribute("href"));
+                Genre genre(href);
+                programme.AddGenre(genre);
+                genreElement = genreElement->NextSiblingElement("genre");
+            }
+
+            // links
+            XMLElement* linkElement = programmeElement->FirstChildElement("link");
+            while(linkElement != nullptr)
+            {
+                string uri(linkElement->Attribute("uri"));
+                Link link(uri);
+                const char* mimeValue = linkElement->Attribute("mimeValue");
+                if(mimeValue != nullptr)
+                {
+                    link.SetContent(string(mimeValue));
+                }
+                programme.AddLink(link);
+                linkElement = linkElement->NextSiblingElement("link");
+            }
+
+            // locations
+            XMLElement* locationElement = programmeElement->FirstChildElement("location");
+            while(locationElement != nullptr)     
+            {
+                Location location = parse_location(locationElement);
+                programme.AddLocation(location);
+                locationElement = programmeElement->NextSiblingElement("location");
+            }       
+
+            return programme;
+        }
+
+        Location XmlMarshaller::parse_location(XMLElement* locationElement) const
+        {
+            Location location;
+
+            // times
+            XMLElement* timeElement = locationElement->FirstChildElement("time");
+            while(timeElement != nullptr)     
+            {
+                AbsoluteTime time(parse_datetime(timeElement->Attribute("time")), 
+                                  parse_duration(timeElement->Attribute("duration")));
+                location.AddAbsoluteTime(time);
+                timeElement = timeElement->NextSiblingElement("location");
+
+            }   
+
+            return location;
+        }
+
+        DateTime parse_datetime(string input)
+        {
+            struct tm tm;
+            std::istringstream iss(input);
+            iss >> std::get_time(&tm, "%FT%T%z");
+            return std::chrono::system_clock::from_time_t(mktime(&tm));
+        }
+
+        Duration parse_duration(string input)
+        {
+            std::regex r("^P([0-9]+Y|)?([0-9]+M|)?([0-9]+D|)?T?([0-9]+H|)?([0-9]+M|)?([0-9]+S|)?$");
+            std::smatch match;
+            if(std::regex_search(input, match, r) && match.size() > 1)
+            {
+                try
+                {
+                    int seconds = 0;
+                    if(match.length(6)) seconds += std::stoi(match.str(6));
+                    if(match.length(5)) seconds += (std::stoi(match.str(5)) * 60);
+                    if(match.length(4)) seconds += (std::stoi(match.str(4)) * 60 * 60);
+                    if(match.length(3)) seconds += (std::stoi(match.str(3)) * 24 * 60 * 60);
+                    return Duration(seconds);
+                } 
+                catch(exception& e) 
+                {
+                    throw invalid_duration(input);
+                }
+            } else {
+                throw invalid_duration(input);
+            }
+        }
+
+
     }        
             
 }

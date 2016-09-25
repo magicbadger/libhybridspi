@@ -213,11 +213,11 @@ namespace hybridspi
     {
         public:
             
-            vector<GeoLocation*>::iterator Locations() { return geolocations.begin(); };
+            vector<GeoLocation*>::iterator GeoLocations() { return geolocations.begin(); };
             
-            void AddLocation(GeoLocation* geolocation);
+            void AddGeoLocation(GeoLocation* geolocation);
             
-            void RemoveLocation(GeoLocation* geolocation);
+            void RemoveGeoLocation(GeoLocation* geolocation);
             
         private:
         
