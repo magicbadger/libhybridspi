@@ -61,6 +61,12 @@ namespace hybridspi
     Name::Name(string text, int max_length)
         : BaseText(text, max_length)
     { }
+
+    ostream& operator<< (ostream& stream, const BaseText& text)
+    {
+        stream << text.Text();
+        return stream;
+    }
     
     LongName::LongName(string text) 
         : Name(text, 128)
@@ -283,6 +289,12 @@ namespace hybridspi
     {
         return !(*this == that);        
     }     
+
+    ostream& operator<< (ostream& stream, const Membership& membership)
+    {
+        stream << membership.Id();
+        return stream;
+    }
     
     Multimedia::Multimedia(string location, string content)
         : location(location), content(content)
@@ -348,6 +360,12 @@ namespace hybridspi
     {
         return !(*this == that);
     }  
+
+    ostream& operator<< (ostream& stream, const Bearer& bearer)
+    {
+        stream << bearer.URI();
+        return stream;
+    }
     
     DigitalBearer::DigitalBearer(string content, int cost, int offset)
         : Bearer(cost, offset), content(content)

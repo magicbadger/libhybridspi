@@ -1,4 +1,5 @@
 #include <hybridspi/programmes.h>
+#include <hybridspi/util.h>
 #include <iostream>
 
 AbsoluteTime::AbsoluteTime(DateTime billedTime, Duration billedDuration)
@@ -100,6 +101,12 @@ bool Location::operator== (const Location &that) const
 bool Location::operator!= (const Location &that) const
 {
     return !(*this == that);
+}
+
+ostream& operator<< (ostream& stream, const Location& location)
+{
+    stream << "bearers=" << join(location.Bearers()); 
+    return stream;
 }
 
 Schedule::Schedule(DateTime created, unsigned int version)

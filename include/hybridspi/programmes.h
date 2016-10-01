@@ -89,6 +89,8 @@ namespace hybridspi
             bool operator== (const Location &that) const;
             
             bool operator!= (const Location &that) const;                            
+
+            friend ostream& operator<< (ostream& stream, const Location& location);
            
         private:
 

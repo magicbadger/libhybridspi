@@ -57,7 +57,9 @@ namespace hybridspi
             bool operator== (const BaseText &that) const;
             
             bool operator!= (const BaseText &that) const;            
-            
+
+            friend ostream& operator<< (ostream& stream, const BaseText& text);
+
         private:
             
             string text;
@@ -160,6 +162,8 @@ namespace hybridspi
             double Latitude() { return latitude; }
             
             double Longitude() { return longitude; }
+
+            friend ostream& operator<< (ostream& stream, const Point& point);
             
         protected:
         
@@ -180,6 +184,8 @@ namespace hybridspi
             
             string Code() { return code; };
         
+            friend ostream& operator<< (ostream& stream, const CountryCode& country);
+
         protected:
         
             bool equals(const GeoLocation& a) const;
@@ -199,6 +205,8 @@ namespace hybridspi
             
             vector<Point>::iterator Points() { return points.begin(); };
         
+            friend ostream& operator<< (ostream& stream, const Polygon& polygon);
+
         protected:
         
             bool equals(const GeoLocation& a) const;
@@ -244,6 +252,8 @@ namespace hybridspi
             bool operator!= (const Bearer &that) const;  
             
             virtual string URI() const = 0;  
+
+            friend ostream& operator<< (ostream& stream, const Bearer& bearer);
             
         protected:
       
@@ -408,16 +418,18 @@ namespace hybridspi
         
             Membership(string id, unsigned short shortId, unsigned short index = 1);
             
-            unsigned short ShortId() { return shortId; };
+            unsigned short ShortId() const { return shortId; };
             
-            string Id() { return id; };
+            string Id() const { return id; };
             
-            unsigned short Index() { return index; };
+            unsigned short Index() const { return index; };
             
             bool operator== (const Membership &that) const;
             
             bool operator!= (const Membership &that) const;             
         
+            friend ostream& operator<< (ostream& stream, const Membership& membership);
+
         private:
         
             unsigned short shortId;
@@ -456,7 +468,7 @@ namespace hybridspi
             
             bool operator!= (const Multimedia &that) const;   
             
-            friend ostream& operator<< (ostream& stream, const Multimedia& genre);                                       
+            friend ostream& operator<< (ostream& stream, const Multimedia& multimedia);                                       
             
         private:
             
