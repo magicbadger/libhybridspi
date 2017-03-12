@@ -32,7 +32,14 @@ int main(int argc, char* argv[])
             cout << "\t\tGenres: " << join<Genre>(programme.Genres()) << endl;
             cout << "\t\tMedia: " << join<Multimedia>(programme.Media()) << endl;
             cout << "\t\tMembership: " << join<Membership>(programme.Memberships()) << endl;
-            cout << "\t\tLocations: " << join<Location>(programme.Locations()) << endl;
+            cout << "\t\tLocations: " << endl;
+            for(auto &location : programme.Locations())
+            {
+                cout << "\t\t\tBearers: " << join<Bearer*>(location.Bearers()) << endl;;
+                cout << "\t\t\tRelativeTimes: " << join<RelativeTime>(location.RelativeTimes()) << endl;
+                cout << "\t\t\tAbsoluteTimes: " << join<AbsoluteTime>(location.AbsoluteTimes()) << endl;
+    
+            }
         }
         cout << endl;
     }

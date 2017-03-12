@@ -46,8 +46,33 @@ namespace hybridspi
             return serviceInformationElement.encode();
         }
         
-        vector<unsigned char> BinaryMarshaller::Marshall(ProgrammeInfo programme_info) const
+        vector<unsigned char> BinaryMarshaller::Marshall(ProgrammeInfo info) const
         {
+            // epg
+            Element epgElement(0x02);
+
+            // schedule - just pick the first one for now but really we'll need to 
+            // allow some kind of selection
+            Schedule schedule = info.Schedules().front();
+            Element scheduleElement(0x21);
+
+            if(schedule.Version() > 0)
+            {
+                Attribute versionAttribute(0x80, encode_number<16>(schedule.Version()));
+                scheduleElement.AddAttribute(versionAttribute);
+            }       
+            if(!schedule.Originator().empty())
+            {
+                Attribute originatorAttribute(0x80, encode_number<16>(schedule.Version()));
+                scheduleElement.AddAttribute(Attribute(0x82, schedule.Originator()));
+            }                 
+
+            // scope - simple scope for now
+            Element scopeElement(0x24);
+            scopeElement.AddAttribute(Attribute(0x80, encode_timepoint(schedule.ScopeStart())));
+            scopeElement.AddAttribute(Attribute(0x81, encode_timepoint(schedule.ScopeStop())));
+            scheduleElement
+
             vector<unsigned char> bytes;
             return bytes;
         }

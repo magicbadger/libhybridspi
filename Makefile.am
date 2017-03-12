@@ -31,6 +31,7 @@ bin_PROGRAMS = \
     examples/marshall_serviceinfo_minimal_xml \
     examples/marshall_serviceinfo_minimal_binary \
     examples/marshall_programmeinfo_minimal_xml \
+    examples/marshall_programmeinfo_minimal_binary \
     examples/marshall_programmeinfo_spec_xml \
     examples/unmarshall_serviceinfo_spec_xml \
     examples/unmarshall_programmeinfo_xml 
@@ -54,6 +55,10 @@ examples_marshall_serviceinfo_minimal_binary_LDADD = -Lsrc/.libs -lhybridspi
 examples_marshall_programmeinfo_minimal_xml_SOURCES = examples/marshall_programmeinfo_minimal_xml.cpp
 examples_marshall_programmeinfo_minimal_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}
 examples_marshall_programmeinfo_minimal_xml_LDADD = -Lsrc/.libs -lhybridspi
+
+examples_marshall_programmeinfo_minimal_binary_SOURCES = examples/marshall_programmeinfo_minimal_binary.cpp
+examples_marshall_programmeinfo_minimal_binary_CPPFLAGS = -Iinclude 
+examples_marshall_programmeinfo_minimal_binary_LDADD = -Lsrc/.libs -lhybridspi
 
 examples_marshall_programmeinfo_spec_xml_SOURCES = examples/marshall_programmeinfo_spec_xml.cpp
 examples_marshall_programmeinfo_spec_xml_CPPFLAGS = -Iinclude ${TINYXML2_CFLAGS}

@@ -17,17 +17,19 @@ namespace hybridspi
             
             AbsoluteTime(DateTime billedTime, Duration billedDuration, DateTime actualTime, Duration actualDuration);
             
-            DateTime BilledTime() { return billedTime; };
+            DateTime BilledTime() const { return billedTime; };
             
-            Duration BilledDuration() { return billedDuration; };
+            Duration BilledDuration() const { return billedDuration; };
             
-            DateTime ActualTime() { return actualTime; };
+            DateTime ActualTime() const { return actualTime; };
             
-            Duration ActualDuration() { return actualDuration; };
+            Duration ActualDuration() const { return actualDuration; };
             
             bool operator== (const AbsoluteTime &that) const;
             
-            bool operator!= (const AbsoluteTime &that) const;               
+            bool operator!= (const AbsoluteTime &that) const;     
+
+            friend ostream& operator<< (ostream& stream, const AbsoluteTime& time);       
 
         private:
 
@@ -44,17 +46,19 @@ namespace hybridspi
             
             RelativeTime(Duration billedTime, Duration billedDuration, Duration actualTime, Duration actualDuration);
             
-            Duration BilledTime() { return billedTime; };
+            Duration BilledTime() const { return billedTime; };
             
-            Duration BilledDuration() { return billedDuration; };
+            Duration BilledDuration() const { return billedDuration; };
             
-            Duration ActualTime() { return actualTime; };
+            Duration ActualTime() const { return actualTime; };
             
-            Duration ActualDuration() { return actualDuration; };
+            Duration ActualDuration() const { return actualDuration; };
             
             bool operator== (const RelativeTime &that) const;
             
-            bool operator!= (const RelativeTime &that) const;               
+            bool operator!= (const RelativeTime &that) const;  
+
+            friend ostream& operator<< (ostream& stream, const RelativeTime& time);                                       
 
         private:
 
@@ -89,8 +93,6 @@ namespace hybridspi
             bool operator== (const Location &that) const;
             
             bool operator!= (const Location &that) const;                            
-
-            friend ostream& operator<< (ostream& stream, const Location& location);
            
         private:
 
@@ -205,15 +207,15 @@ namespace hybridspi
     {
         public:
             
-            Schedule(DateTime created = system_clock::now(), unsigned int version = 0);
+            Schedule(DateTime start, DateTime stop, DateTime created = system_clock::now(), unsigned int version = 0);
             
             DateTime Created() { return created; };
             
             unsigned int Version() { return version; };
-            
-            void SetScope(DateTime start, DateTime stop);
-            
-            pair<DateTime, DateTime> Scope();
+
+            DateTime ScopeStart { return start; };
+
+            DateTime ScopeStop { return stop; };
 
             void SetOriginator(string originator);
             
@@ -233,7 +235,7 @@ namespace hybridspi
 
             DateTime start;
             
-            DateTime end;
+            DateTime stop;
 
             DateTime created;
 

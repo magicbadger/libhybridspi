@@ -6,10 +6,10 @@
 #include <sstream>
 
 template<typename T>
-string join(vector<T> items, char sep = ' ') {
+string join(vector<T> items, string sep = ", ") {
     stringstream ss;
     std::for_each(items.begin(), items.end(), [&](T t){ ss << t << sep; });
-    return ss.str();
+    return ss.str().substr(0, ss.str().length() - sep.length());
 }
 
 template<size_t size>
@@ -113,13 +113,6 @@ inline std::ostream& operator<< (std::ostream& stream, const std::bitset<64>& bi
     for (size_t i = 0; i < bits.size(); ++i)
         text.insert(0, bits[i] ? "1": "0");
     stream << text;
-    return stream;
-}
-
-inline std::ostream& operator<< (std::ostream& stream, const DateTime timepoint)
-{
-    std::time_t timepoint_t = std::chrono::system_clock::to_time_t(timepoint);
-    stream << std::put_time(std::localtime(&timepoint_t), "%FT%T%Z");
     return stream;
 }
 

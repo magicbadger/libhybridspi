@@ -609,6 +609,19 @@ namespace hybridspi
     //         DateTime start, end;
     // }
     
+    static std::ostream& operator<< (std::ostream& stream, const DateTime& timepoint)
+    {
+        std::time_t timepoint_t = std::chrono::system_clock::to_time_t(timepoint);
+        stream << std::put_time(std::localtime(&timepoint_t), "%FT%T%Z");
+        return stream;
+    }
+
+    static std::ostream& operator<< (std::ostream& stream, const Duration& duration)
+    {
+        stream << "PT" << duration.count() << "S"; // hardcore to seconds for now
+        return stream;
+    }
+
 }
 
 #endif
